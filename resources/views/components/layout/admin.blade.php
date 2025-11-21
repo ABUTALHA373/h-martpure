@@ -6,11 +6,16 @@
 
 <div class="grid md:grid-cols-[12rem_auto] lg:grid-cols-[16rem_auto] h-[100dvh]">
     <div class="hidden md:block bg-bg-primary border-r border-custom" id="sideBar">
-        <div class="h-8 p-2 flex justify-end md:h-16">
+        <div class="h-8 p-2 flex justify-end md:h-16 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                 stroke="currentColor" class="md:hidden size-5" id="sideBarClose">
+                 stroke="currentColor" class="md:hidden size-5 text-secondary hover:bg-bg-secondary" id="sideBarClose">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
             </svg>
+        </div>
+        <div
+            class="p-2 flex m-2 md:hidden flex-col gap-1 text-center` rounded-md border border-custom text-sm font-semibold uppercase">
+            <span class="leading-3.5">{{auth('admin')->user()->name}}</span>
+            <span class="text-[0.6rem] font-light text-secondary leading-2">{{auth('admin')->user()->user_type}}</span>
         </div>
         <livewire:layout.sidebar/>
     </div>

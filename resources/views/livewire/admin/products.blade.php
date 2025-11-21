@@ -15,9 +15,9 @@
         </button>
     </div>
     <div class="grid grid-cols-[auto_auto_1fr]">
-        <input type="text">
-        <input>
-        <input>
+        {{--        <input type="text">--}}
+        {{--        <input>--}}
+        {{--        <input>--}}
     </div>
 
 </div>

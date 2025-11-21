@@ -30,7 +30,7 @@
                                wire:model.defer="email"
                                class="block w-full rounded-md bg-bg-secondary  border border-custom px-3 py-1.5 text-base
                                       placeholder:/50
-                                      focus:border-green-600 outline-none"/>
+                                      focus:border-secondary outline-none"/>
                     </div>
                     @error('email')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -42,7 +42,7 @@
                     <div class="flex items-center justify-between">
                         <label for="password" class="block text-sm font-medium ">Password</label>
                         <div class="text-sm">
-                            <a href="#" class="text-green-500 text-xs">
+                            <a href="#" class="text-secondary text-xs">
                                 Forgot password?
                             </a>
                         </div>
@@ -52,7 +52,7 @@
                                wire:model.defer="password"
                                class="block w-full rounded-md bg-bg-secondary  border border-custom px-3 py-1.5 text-base
                                       placeholder:/50
-                                      focus:border-green-600 outline-none"/>
+                                      focus:border-secondary outline-none"/>
                     </div>
                     @error('password')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
