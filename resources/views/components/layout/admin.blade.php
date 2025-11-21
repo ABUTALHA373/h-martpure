@@ -35,27 +35,6 @@
 
 </div>
 
-{{--<div class="grid grid-rows-[4rem_auto] h-[100dvh]">--}}
-{{--    --}}{{-- Top Navbar --}}
-{{--    <div class="grid grid-cols-[15rem_auto] h-full bg-bg-primary border-b border-custom">--}}
-{{--        <div>--}}
-{{--            test--}}
-{{--        </div>--}}
-{{--        <livewire:layout.navbar/>--}}
-{{--    </div>--}}
-{{--    --}}{{-- Sidebar + Content --}}
-{{--    <div class="grid grid-cols-[16rem_auto] h-full">--}}
-{{--        <div class="bg-bg-primary border-r border-custom">--}}
-{{--            <livewire:layout.sidebar/>--}}
-{{--        </div>--}}
-{{--        <div class="bg-bg-secondary p-8 text-sm">--}}
-{{--            {{ $slot }}--}}
-{{--        </div>--}}
-{{--    </div>--}}
-
-{{--</div>--}}
-
-
 @livewireScripts
 <script>
     document.addEventListener('livewire:navigated', () => {

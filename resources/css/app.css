@@ -13,13 +13,6 @@
 
 }
 
-
-/*@theme static {*/
-/*    --color-primary: var(--color-cyan-500);*/
-/*    --color-secondary: var(--color-blue-500);*/
-/*}*/
-
-
 @custom-media --sm (min-width: 641px);
 @custom-media --md (min-width: 769px);
 @custom-media --lg (min-width: 1025px);
@@ -77,6 +70,42 @@ a.custom {
     @apply text-secondary hover:underline
 }
 
-a {
-    @apply text-base
+
+/*===========================================================================================
+Dont touch these lines
+===========================================================================================*/
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-custom);
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-text-secondary);
+}
+
+/* Number Input Styling */
+input[type="number"] {
+    /* Removed color-scheme to fix dark-on-light issue */
+}
+
+:root.dark input[type="number"] {
+    color-scheme: dark;
+}
+
+/* Select Options Styling */
+select option {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    padding: 10px;
 }

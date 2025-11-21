@@ -26,11 +26,10 @@
                 <div>
                     <label for="email" class="block text-sm font-medium ">Email address</label>
                     <div class="mt-2">
-                        <input id="email" type="email" name="email" required autocomplete="email"
-                               wire:model.defer="email"
-                               class="block w-full rounded-md bg-bg-secondary  border border-custom px-3 py-1.5 text-base
-                                      placeholder:/50
-                                      focus:border-secondary outline-none"/>
+                        <x-others.input class="w-full bg-bg-secondary" id="email" type="email" name="email" required
+                                        autocomplete="email"
+                                        wire:model.defer="email">
+                        </x-others.input>
                     </div>
                     @error('email')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -42,17 +41,17 @@
                     <div class="flex items-center justify-between">
                         <label for="password" class="block text-sm font-medium ">Password</label>
                         <div class="text-sm">
-                            <a href="#" class="text-secondary text-xs">
+                            <a href="#" class="text-secondary text-md">
                                 Forgot password?
                             </a>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <input id="password" type="password" name="password" required autocomplete="current-password"
-                               wire:model.defer="password"
-                               class="block w-full rounded-md bg-bg-secondary  border border-custom px-3 py-1.5 text-base
-                                      placeholder:/50
-                                      focus:border-secondary outline-none"/>
+                        <x-others.input id="password" type="password" name="password" required
+                                        autocomplete="current-password"
+                                        wire:model.defer="password"
+                                        class="w-full bg-bg-secondary">
+                        </x-others.input>
                     </div>
                     @error('password')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -80,7 +79,7 @@
             <!-- Footer -->
             <p class="mt-10 text-center text-sm /70">
                 Not a member?
-                <a href="#">
+                <a href="#" class="text-secondary text-md">
                     Create a new account!
                 </a>
             </p>

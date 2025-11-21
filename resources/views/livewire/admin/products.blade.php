@@ -5,7 +5,7 @@
             <h1 class="text-3xl font-bold text-text-primary">Products</h1>
             <p class="text-text-secondary mt-1">Manage your product inventory and catalog</p>
         </div>
-        <button class="btn btn-primary">
+        <button wire:click="openAddModal" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
                     d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/>
@@ -18,49 +18,57 @@
     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
         {{-- Search --}}
         <div class="md:col-span-5 relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="size-5 text-text-secondary">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-                </svg>
-            </div>
-            <input type="text"
-                   class="w-full pl-10 pr-4 py-2 rounded-lg border border-custom bg-bg-primary text-text-primary placeholder-text-secondary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                   placeholder="Search products by name, SKU...">
+            {{--            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">--}}
+            {{--                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"--}}
+            {{--                     stroke="currentColor" class="size-5 text-text-secondary">--}}
+            {{--                    <path stroke-linecap="round" stroke-linejoin="round"--}}
+            {{--                          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>--}}
+            {{--                </svg>--}}
+            {{--            </div>--}}
+            <x-others.input class="w-full bg-bg-primary" type="text" placeholder="Search products by name, SKU...">
+            </x-others.input>
         </div>
-
         {{-- Category Filter --}}
         <div class="md:col-span-3">
-            <select
-                class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-primary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors appearance-none cursor-pointer">
-                <option value="">All Categories</option>
-                <option value="electronics">Electronics</option>
-                <option value="clothing">Clothing</option>
-                <option value="home">Home & Garden</option>
-            </select>
+            <x-others.select
+                wire:model="category"
+                placeholder="All Categories"
+                :options="[
+                    ['label' => 'Electronics', 'value' => 'electronics'],
+                    ['label' => 'Clothing', 'value' => 'clothing'],
+                    ['label' => 'Home & Garden', 'value' => 'home']
+                ]"
+            />
         </div>
 
         {{-- Stock Status Filter --}}
         <div class="md:col-span-2">
-            <select
-                class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-primary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors appearance-none cursor-pointer">
-                <option value="">All Status</option>
-                <option value="in_stock">In Stock</option>
-                <option value="low_stock">Low Stock</option>
-                <option value="out_of_stock">Out of Stock</option>
-            </select>
+            <x-others.select
+                wire:model="status"
+                placeholder="All Status"
+                :options="[
+                    ['label' => 'In Stock', 'value' => 'in_stock'],
+                    ['label' => 'Low Stock', 'value' => 'low_stock'],
+                    ['label' => 'Out of Stock', 'value' => 'out_of_stock']
+                ]"
+            />
         </div>
 
         {{-- Sort --}}
         <div class="md:col-span-2">
-            <select
-                class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-primary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors appearance-none cursor-pointer">
-                <option value="newest">Newest First</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-                <option value="name_asc">Name: A-Z</option>
-            </select>
+            @php
+                $options = collect($persons)->map(fn($p) =>     [
+            'label' => $p['name'],      // Visible text
+            'value' => $p['roll'],      // Actual value
+                ])->toArray();
+            @endphp
+
+
+            <x-others.select
+                wire:model="sort"
+                placeholder="Sort By"
+                :options="$options"
+            />
         </div>
     </div>
 
@@ -90,7 +98,24 @@
                                      class="h-full w-full object-cover">
                             </div>
                             <div>
-                                <div class="font-medium text-text-primary">Wireless Noise-Canceling Headphones</div>
+                                <div
+                                    wire:click="openDetailModal({
+                                        name: 'Wireless Noise-Canceling Headphones',
+                                        sku: 'WNC-001',
+                                        category: 'Electronics',
+                                        price: '$299.00',
+                                        stock: '45 units',
+                                        status: 'In Stock',
+                                        description: 'Experience premium sound quality with our latest noise-canceling technology. Perfect for travel and work.',
+                                        images: [
+                                            'https://placehold.co/600x400?text=Headphone+1',
+                                            'https://placehold.co/600x400?text=Headphone+2',
+                                            'https://placehold.co/600x400?text=Headphone+3'
+                                        ]
+                                    })"
+                                    class="font-medium text-text-primary cursor-pointer hover:text-secondary transition-colors">
+                                    Wireless Noise-Canceling Headphones
+                                </div>
                                 <div class="text-xs text-text-secondary">SKU: WNC-001</div>
                             </div>
                         </div>
@@ -139,7 +164,23 @@
                                      class="h-full w-full object-cover">
                             </div>
                             <div>
-                                <div class="font-medium text-text-primary">Smart Fitness Watch</div>
+                                <div
+                                    wire:click="openDetailModal({
+                                        name: 'Smart Fitness Watch',
+                                        sku: 'SFW-202',
+                                        category: 'Wearables',
+                                        price: '$149.50',
+                                        stock: '12 units',
+                                        status: 'Low Stock',
+                                        description: 'Track your fitness goals with precision. Features heart rate monitoring, GPS, and 7-day battery life.',
+                                        images: [
+                                            'https://placehold.co/600x400?text=Watch+1',
+                                            'https://placehold.co/600x400?text=Watch+2'
+                                        ]
+                                    })"
+                                    class="font-medium text-text-primary cursor-pointer hover:text-secondary transition-colors">
+                                    Smart Fitness Watch
+                                </div>
                                 <div class="text-xs text-text-secondary">SKU: SFW-202</div>
                             </div>
                         </div>
@@ -157,8 +198,7 @@
                         <div
                             class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
-                                class="p-1.5 text-text-secondary hover:text-secondary hover:bg-bg-secondary rounded-md transition-colors"
-                                title="Edit">
+                                class="p-1.5 text-text-secondary hover:text-secondary hover:bg-bg-secondary rounded-md transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke-width="1.5" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -166,8 +206,7 @@
                                 </svg>
                             </button>
                             <button
-                                class="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-                                title="Delete">
+                                class="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke-width="1.5" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -178,54 +217,6 @@
                     </td>
                 </tr>
 
-                </tbody>
-                <tr class="hover:bg-bg-secondary/50 transition-colors group">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="h-12 w-12 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden border border-custom">
-                                <img src="https://placehold.co/100x100" alt="Product"
-                                     class="h-full w-full object-cover">
-                            </div>
-                            <div>
-                                <div class="font-medium text-text-primary">Ergonomic Office Chair</div>
-                                <div class="text-xs text-text-secondary">SKU: EOC-555</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-text-secondary">Furniture</td>
-                    <td class="px-6 py-4 font-medium text-text-primary">$450.00</td>
-                    <td class="px-6 py-4 text-text-secondary">0 units</td>
-                    <td class="px-6 py-4">
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
-                                Out of Stock
-                            </span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div
-                            class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                                class="p-1.5 text-text-secondary hover:text-secondary hover:bg-bg-secondary rounded-md transition-colors"
-                                title="Edit">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     stroke-width="1.5" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/>
-                                </svg>
-                            </button>
-                            <button
-                                class="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-                                title="Delete">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     stroke-width="1.5" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
                 {{-- Example Row 3 --}}
                 <tr class="hover:bg-bg-secondary/50 transition-colors group">
                     <td class="px-6 py-4">
@@ -342,4 +333,186 @@
         </div>
     </div>
 
+    {{-- Add Product Modal --}}
+    @if($showAddModal)
+        <x-others.modal>
+            <div class="p-6 border-b border-custom flex justify-between items-center">
+                <h2 class="text-xl font-bold text-text-primary">Add New Product</h2>
+                <button wire:click="closeAddModal" class="text-text-secondary hover:text-text-primary cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-6">
+                {{-- Basic Info --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-2">Product Name</label>
+                        <input type="text" wire:model="name"
+                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-2">SKU</label>
+                        <input type="text" wire:model="sku"
+                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-2">Price</label>
+                        <input type="number" wire:model="price"
+                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-2">Stock</label>
+                        <input type="number" wire:model="stock"
+                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    </div>
+                </div>
+
+                {{-- Image Upload --}}
+                <div>
+                    <label class="block text-sm font-medium text-text-secondary mb-2">Product Images (Max 5)</label>
+                    <div
+                        class="border-2 border-dashed border-custom rounded-lg p-8 text-center hover:bg-bg-secondary transition-colors relative cursor-pointer">
+                        <input type="file" wire:model="images" multiple accept="image/*"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div class="text-text-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                 stroke="currentColor" class="size-10 mx-auto mb-2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
+                            </svg>
+                            <p>Click or drag to upload images</p>
+                        </div>
+                    </div>
+
+                    {{-- Previews --}}
+                    @if($images)
+                        <div class="grid grid-cols-5 gap-4 mt-4">
+                            @foreach($images as $index => $img)
+                                <div
+                                    class="relative aspect-square rounded-lg overflow-hidden border border-custom group">
+                                    <img src="{{ $img->temporaryUrl() }}" class="w-full h-full object-cover">
+                                    <button wire:click="removeImage({{ $index }})"
+                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                             class="size-3">
+                                            <path
+                                                d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="p-6 border-t border-custom flex justify-end gap-3">
+                <button wire:click="closeAddModal" class="btn border-custom text-text-secondary hover:bg-bg-secondary">
+                    Cancel
+                </button>
+                <button wire:click="saveProduct" class="btn btn-primary">Save Product</button>
+            </div>
+        </x-others.modal>
+    @endif
+
+    {{-- Product Detail Modal --}}
+    @if($showDetailModal && $selectedProduct)
+
+        <x-others.modal>
+            <div class="p-6 border-b border-custom flex justify-between items-center">
+                <h2 class="text-xl font-bold text-text-primary">{{ $selectedProduct['name'] }}</h2>
+                <button wire:click="closeDetailModal"
+                        class="text-text-secondary hover:text-text-primary cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                {{-- Image Gallery --}}
+                <div class="space-y-4">
+                    <div class="aspect-square rounded-xl overflow-hidden border border-custom bg-gray-100">
+                        <img src="{{ $selectedProduct['images'][0] }}"
+                             class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                             wire:click="openLightbox(0)">
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        @foreach($selectedProduct['images'] as $index => $img)
+                            <div
+                                class="aspect-square rounded-lg overflow-hidden border border-custom cursor-pointer hover:ring-2 hover:ring-secondary transition-all"
+                                wire:click="openLightbox({{ $index }})">
+                                <img src="{{ $img }}" class="w-full h-full object-cover">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Details --}}
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                                <span
+                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-text-secondary border border-custom">{{ $selectedProduct['category'] }}</span>
+                            <span
+                                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">{{ $selectedProduct['status'] }}</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-text-primary mb-1">{{ $selectedProduct['price'] }}</h3>
+                        <p class="text-sm text-text-secondary">SKU: <span>{{ $selectedProduct['sku'] }}</span></p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-text-primary mb-2">Description</h4>
+                        <p class="text-text-secondary leading-relaxed">{{ $selectedProduct['description'] }}</p>
+                    </div>
+
+                    <div class="pt-6 border-t border-custom">
+                        <div class="flex justify-between items-center">
+                            <span class="text-text-secondary">Stock Quantity</span>
+                            <span class="font-medium text-text-primary">{{ $selectedProduct['stock'] }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-others.modal>
+    @endif
+
+    {{-- Lightbox --}}
+    @if($lightboxOpen && $selectedProduct)
+        <div class="fixed inset-0 z-[60] bg-black/95 flex items-center justify-center">
+
+            <button wire:click="closeLightbox"
+                    class="absolute top-4 right-4 text-white/70 hover:text-white p-2 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <button wire:click="prevImage" class="absolute left-4 text-white/70 hover:text-white p-2 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+                </svg>
+            </button>
+
+            <div class="max-w-5xl max-h-[85vh] p-4">
+                <img src="{{ $selectedProduct['images'][$currentImageIndex] }}"
+                     class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+            </div>
+
+            <button wire:click="nextImage" class="absolute right-4 text-white/70 hover:text-white p-2 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                </svg>
+            </button>
+
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+                <span>{{ $currentImageIndex + 1 }}</span> / <span>{{ count($selectedProduct['images']) }}</span>
+            </div>
+        </div>
+    @endif
 </div>

@@ -31,6 +31,7 @@ return new class extends Migration {
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('slug')->unique();
+            $table->string('sku')->unique();
             $table->decimal('buying_price', 10, 2);
             $table->decimal('selling_price', 10, 2);
             $table->json('images')->nullable();
@@ -41,16 +42,20 @@ return new class extends Migration {
             $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
         });
 
-        Schema::create('product_categories', function (Blueprint $table) {
+        Schema::create('inventories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('category_id');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('uid')->unique();
+            $table->integer('quantity')->default(0);
+            $table->decimal('cost_price', 10, 2)->nullable();
+            $table->decimal('sell_price', 10, 2)->nullable();
+            $table->string('location')->nullable();
+
+            // Status and Sell Order
+            $table->enum('status', ['active', 'inactive'])->default('active'); // active/inactive stock
+            $table->integer('sell_order')->default(0); // lower = first to sell
+
             $table->timestamps();
-
-            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
-            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
-
-            $table->unique(['product_id', 'category_id']);
         });
 
         Schema::create('addresses', function (Blueprint $table) {
@@ -77,12 +82,12 @@ return new class extends Migration {
             $table->string('order_number')->unique();
             $table->decimal('total_amount', 10, 2);
             $table->decimal('shipping_fee', 10, 2)->default(0);
-            $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'processing'])->default('pending');
             $table->enum('order_status', [
                 'pending', 'processing', 'shipped', 'delivered', 'cancelled'
             ])->default('pending');
             $table->string('tracking_number')->nullable();
-            $table->string('tracking_url')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
