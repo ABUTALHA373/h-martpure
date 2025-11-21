@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    /*--font-sans: "Lexend Deca", ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';*/
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+}
+
+
+/*@theme static {*/
+/*    --color-primary: var(--color-cyan-500);*/
+/*    --color-secondary: var(--color-blue-500);*/
+/*}*/
+
+
+@custom-media --sm (min-width: 641px);
+@custom-media --md (min-width: 769px);
+@custom-media --lg (min-width: 1025px);
+@custom-media --xl (min-width: 1281px);
+@custom-media --2xl (min-width: 1537px);
+
+
+@theme {
+
+    /* LIGHT THEME */
+    --color-primary: var(--color-black);
+    --color-secondary: #00a095;
+    --color-bg-primary: var(--color-white);
+    --color-bg-secondary: var(--color-gray-100);
+    --color-text-primary: var(--color-primary);
+    --color-text-secondary: var(--color-gray-500);
+
+    /*for border only*/
+    --color-custom: var(--color-gray-300);
+
+    /* HOVERS */
+    --color-primary-hover: var(--color-gray-800);
+    --color-secondary-hover: color-mix(in srgb, var(--color-secondary), #000 15%);
+}
+
+/* ================================
+   DARK THEME OVERRIDES
+================================= */
+:root.dark {
+    --color-primary: var(--color-black);
+    --color-bg-primary: #1d2530;
+    --color-bg-secondary: #181c22;
+    --color-text-primary: var(--color-white);
+    --color-text-secondary: var(--color-gray-500);
+
+    /*for border only*/
+    --color-custom: var(--color-gray-700);
+
+    --color-primary-hover: var(--color-gray-800);
+}
+
+.btn {
+    @apply flex justify-center gap-1 rounded-md text-white px-3 py-2 text-sm font-semibold border cursor-pointer transition-colors outline-none
+}
+
+.btn-submit {
+    @apply rounded-md bg-primary hover:bg-primary-hover border-custom
+}
+
+.btn-primary {
+    @apply rounded-md bg-secondary hover:bg-secondary/80 border-secondary
+}
+
+a.custom {
+    @apply text-secondary hover:underline
+}
+
+a {
+    @apply text-base
+}
