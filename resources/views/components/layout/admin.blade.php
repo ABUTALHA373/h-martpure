@@ -4,7 +4,7 @@
 <body
     class="h-[100dvh] text-black  dark:text-white transition-colors duration-300">
 
-<div class="grid md:grid-cols-[12rem_auto] lg:grid-cols-[16rem_auto] h-[100dvh]">
+<div class="grid md:grid-cols-[12rem_auto] lg:grid-cols-[16rem_auto] h-full">
     <div class="hidden md:block bg-bg-primary border-r border-custom" id="sideBar">
         <div class="h-8 p-2 flex justify-end md:h-16 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -22,13 +22,13 @@
     <!-- Content overlay for mobile -->
     <div id="overlay" class="fixed inset-0 bg-black/20 bg-opacity-50 hidden z-40"></div>
 
-    <div class="grid grid-rows-[4rem_auto] h-full">
+    <div class="grid grid-rows-[4rem_1fr] h-full overflow-hidden">
         <div class=" bg-bg-primary border-b border-custom">
             <livewire:layout.navbar/>
         </div>
         {{-- Sidebar + Content --}}
 
-        <div class="bg-bg-secondary p-8 text-sm">
+        <div class="bg-bg-secondary p-8 text-sm overflow-y-auto h-full" id="mainContent">
             {{ $slot }}
         </div>
     </div>
