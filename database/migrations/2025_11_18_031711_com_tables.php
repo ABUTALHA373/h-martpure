@@ -32,8 +32,10 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->string('slug')->unique();
             $table->string('sku')->unique();
-            $table->decimal('buying_price', 10, 2);
-            $table->decimal('selling_price', 10, 2);
+            $table->string('brand'); //
+            $table->string('measurement')->nullable(); //
+            $table->string('measurement_unit')->nullable();
+            $table->unsignedBigInteger('sales_count')->default(0); // integer instead of string
             $table->json('images')->nullable();
             $table->unsignedBigInteger('category_id')->nullable(); // for default category
             $table->boolean('status')->default(true);

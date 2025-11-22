@@ -2,8 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Product;
+use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
+
+//use Livewire\TemporaryUploadedFile;
 
 class Products extends Component
 {
@@ -15,23 +20,31 @@ class Products extends Component
     public $lightboxOpen = false;
 
     // Form Fields
-    public $name = '';
-    public $sku = '';
-    public $category = '';
-    public $price = '';
-    public $stock = '';
-    public $status = 'in_stock';
-    public $description = '';
-    public $images = []; // For file uploads
-    public $persons = [
-        ["roll" => 1, "name" => "John Doe", "email" => "john@example.com", "age" => 22],
-        ["roll" => 2, "name" => "Emma Smith", "email" => "emma@example.com", "age" => 25],
-    ];
+    public $name, $brand, $sku, $category, $main_category, $measurement, $measurement_unit, $status = 1, $description;
+
+    public $images = []; // Stores all valid images
+    public $newImages = []; // Temporary for file input
 
 
     // Detail View
     public $selectedProduct = null;
     public $currentImageIndex = 0;
+    protected $rules = [
+        'name' => 'required|string|max:255',
+        'brand' => 'string|max:255',
+        'sku' => 'required|string|max:255|unique:products,sku',
+        'category' => 'required|int',
+        'measurement' => 'nullable|string|max:255',
+        'measurement_unit' => 'nullable|string|max:255',
+        'status' => 'required|boolean',
+        'description' => 'nullable|string',
+        'newImages.*' => 'image|max:4096', // 2MB per image
+    ];
+
+    public function mount()
+    {
+
+    }
 
     public function render()
     {
@@ -39,16 +52,11 @@ class Products extends Component
     }
 
     // Add Modal Actions
+
     public function openAddModal()
     {
-        $this->reset(['name', 'sku', 'category', 'price', 'stock', 'status', 'description', 'images']);
+        $this->reset(['name', 'brand', 'sku', 'category', 'main_category', 'measurement', 'measurement_unit', 'status', 'description', 'newImages', 'images']);
         $this->showAddModal = true;
-    }
-
-    public function closeAddModal()
-    {
-        $this->showAddModal = false;
-        $this->reset(['name', 'sku', 'category', 'price', 'stock', 'status', 'description', 'images']);
     }
 
     public function removeImage($index)
@@ -58,18 +66,70 @@ class Products extends Component
 
     public function saveProduct()
     {
-        // Validation would go here
-        // For now, just close the modal
+        $this->validate();
+
+        $storedPaths = $this->storeImages(); // stores temp files & keeps existing paths
+        $storedPaths = array_slice($storedPaths, 0, 5); // ensure max 5 images
+
+        Product::create([
+            'name' => $this->name,
+            'brand' => $this->brand,
+            'sku' => $this->sku,
+            'slug' => $this->slug(),
+            'category_id' => $this->category,
+            'measurement' => $this->measurement,
+            'measurement_unit' => $this->measurement_unit,
+            'status' => $this->status,
+            'description' => $this->description,
+            'images' => json_encode($storedPaths),
+        ]);
+
+
         $this->closeAddModal();
     }
 
-    public function updatedImages()
+    private function storeImages()
+    {
+        $paths = [];
+
+        // Only store images that are Livewire temporary uploads
+        foreach ($this->images as $image) {
+            if ($image instanceof TemporaryUploadedFile) {
+                $paths[] = $image->store('products', 'public');
+            } else {
+                // Already stored path
+                $paths[] = $image;
+            }
+        }
+
+        return $paths;
+    }
+
+    public function slug()
+    {
+        return Str::slug("{$this->name}-{$this->measurement}-{$this->measurement_unit}");
+    }
+
+    public function closeAddModal()
+    {
+        $this->showAddModal = false;
+        $this->reset(['name', 'brand', 'sku', 'category', 'main_category', 'measurement', 'measurement_unit', 'status', 'description', 'newImages', 'images']);
+    }
+
+    public function updatedNewImages()
     {
         $this->validate([
-            'images.*' => 'image|max:1024', // 1MB Max
-            'images' => 'max:5', // Max 5 images
+            'newImages.*' => 'image|max:5000', // 5MB per file
         ]);
+
+        foreach ($this->newImages as $image) {
+            if (count($this->images) < 5) {
+                $this->images[] = $image; // just store Livewire temp files
+            }
+        }
+
     }
+
 
     // Detail Modal Actions
     public function openDetailModal($product)

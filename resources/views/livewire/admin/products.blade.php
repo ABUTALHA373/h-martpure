@@ -56,18 +56,22 @@
 
         {{-- Sort --}}
         <div class="md:col-span-2">
-            @php
-                $options = collect($persons)->map(fn($p) =>     [
-            'label' => $p['name'],      // Visible text
-            'value' => $p['roll'],      // Actual value
-                ])->toArray();
-            @endphp
+            {{--            @php--}}
+            {{--                $options = collect($persons)->map(fn($p) =>     [--}}
+            {{--            'label' => $p['name'],      // Visible text--}}
+            {{--            'value' => $p['roll'],      // Actual value--}}
+            {{--                ])->toArray();--}}
+            {{--            @endphp--}}
 
 
             <x-others.select
                 wire:model="sort"
                 placeholder="Sort By"
-                :options="$options"
+                :options="[
+                    ['label' => 'In Stock', 'value' => 'in_stock'],
+                    ['label' => 'Low Stock', 'value' => 'low_stock'],
+                    ['label' => 'Out of Stock', 'value' => 'out_of_stock']
+                ]"
             />
         </div>
     </div>
@@ -345,37 +349,118 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-6 space-y-6">
+            <div class="p-6 space-y-6 flex-1 overflow-y-auto">
                 {{-- Basic Info --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-text-secondary mb-2">Product Name</label>
-                        <input type="text" wire:model="name"
-                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <label class="block text-sm font-medium mb-1">Product Name</label>
+                        <x-others.input wire:model.defer="name" class="w-full bg-bg-secondary"
+                                        placeholder="Enter product name"/>
+                        @error('name')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-text-secondary mb-2">SKU</label>
-                        <input type="text" wire:model="sku"
-                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <label class="block text-sm font-medium mb-1">Brand</label>
+                        <x-others.input wire:model.defer="brand" class="w-full bg-bg-secondary"
+                                        placeholder="Enter Brand"/>
+                        @error('brand')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-text-secondary mb-2">Price</label>
-                        <input type="number" wire:model="price"
-                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <label class="block text-sm font-medium mb-1">SKU</label>
+                        <x-others.input wire:model.defer="sku" class="w-full bg-bg-secondary" placeholder="Enter SKU"/>
+                        @error('sku')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-text-secondary mb-2">Stock</label>
-                        <input type="number" wire:model="stock"
-                               class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <label class="block text-sm font-medium mb-1">Category</label>
+                        <x-others.select
+                            class="bg-bg-secondary"
+                            wire:model.defer="main_category"
+                            placeholder="Select Category"
+                            :options="[
+                                ['label' => 'Electronics', 'value' => 'electronics'],
+                                ['label' => 'Food Item', 'value' => 'food']
+                            ]"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sub Category</label>
+                        <x-others.select
+                            class="bg-bg-secondary"
+                            wire:model.defer="category"
+                            placeholder="Select Category"
+                            :options="[
+                                ['label' => 'Mobile', 'value' => 1],
+                                ['label' => 'Rice', 'value' => 2]
+                            ]"
+                        />
+                        @error('category')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Measurement</label>
+                        <x-others.input wire:model.defer="measurement" type="number" class="w-full bg-bg-secondary"
+                                        placeholder="e.g. 1, 500, 10"/>
+                        @error('measurement')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Measurement Unit</label>
+                        <x-others.select
+                            class="bg-bg-secondary w-full"
+                            wire:model.defer="measurement_unit"
+                            placeholder="Select Unit"
+                            :options="[
+                                ['label' => 'Kilogram', 'value' => 'kg'],
+                                ['label' => 'Gram', 'value' => 'gm'],
+                                ['label' => 'Liter', 'value' => 'ltr'],
+                                ['label' => 'Piece', 'value' => 'pcs'],
+                                ['label' => 'Dozen', 'value' => 'dozen'],
+                                ['label' => 'Pack', 'value' => 'pack'],
+                                ['label' => 'Box', 'value' => 'box'],
+                                ['label' => 'Set', 'value' => 'set']
+                            ]"
+                        />
+                        @error('measurement_unit')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <x-others.select
+                            class="bg-bg-secondary"
+                            wire:model.defer="status"
+                            placeholder="Select Status"
+                            :options="[
+                                ['label' => 'Active', 'value' => 1],
+                                ['label' => 'Inactive', 'value' => 0]
+                            ]"
+                        />
+                        @error('status')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Description</label>
+                        <textarea wire:model.defer="description" rows="4"
+                                  class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary placeholder-text-secondary"></textarea>
                     </div>
                 </div>
 
                 {{-- Image Upload --}}
                 <div>
-                    <label class="block text-sm font-medium text-text-secondary mb-2">Product Images (Max 5)</label>
+                    <label class="block text-sm font-medium mb-1">Product Images (Max 5)</label>
                     <div
                         class="border-2 border-dashed border-custom rounded-lg p-8 text-center hover:bg-bg-secondary transition-colors relative cursor-pointer">
-                        <input type="file" wire:model="images" multiple accept="image/*"
+                        <input type="file" wire:model="newImages" multiple accept="image/*"
                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <div class="text-text-secondary">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -409,10 +494,19 @@
                 </div>
             </div>
             <div class="p-6 border-t border-custom flex justify-end gap-3">
-                <button wire:click="closeAddModal" class="btn border-custom text-text-secondary hover:bg-bg-secondary">
+                <button wire:click="closeAddModal" class="btn btn-tertiary ">
                     Cancel
                 </button>
-                <button wire:click="saveProduct" class="btn btn-primary">Save Product</button>
+                <button wire:click="saveProduct" class="btn btn-primary">
+                    <svg fill="#ffffff" wire:loading wire:target="saveProduct"
+                         class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <path d="M8,1V2.8A5.2,5.2,0,1,1,2.8,8H1A7,7,0,1,0,8,1Z"/>
+                        </g>
+                    </svg>
+                    Save Product
+                </button>
             </div>
         </x-others.modal>
     @endif
@@ -431,7 +525,7 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 overflow-y-auto">
                 {{-- Image Gallery --}}
                 <div class="space-y-4">
                     <div class="aspect-square rounded-xl overflow-hidden border border-custom bg-gray-100">

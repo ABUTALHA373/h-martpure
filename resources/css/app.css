@@ -55,15 +55,15 @@
 }
 
 .btn {
-    @apply flex justify-center gap-1 rounded-md text-white px-3 py-2 text-sm font-semibold border cursor-pointer transition-colors outline-none
+    @apply flex justify-center gap-1 rounded-md px-3 py-2 text-sm font-semibold border cursor-pointer transition-colors outline-none
 }
 
-.btn-submit {
-    @apply rounded-md bg-primary hover:bg-primary-hover border-custom
+.btn-tertiary {
+    @apply text-secondary bg-bg-primary hover:bg-secondary/10 border-secondary
 }
 
 .btn-primary {
-    @apply rounded-md bg-secondary hover:bg-secondary/80 border-secondary
+    @apply rounded-md text-white bg-secondary hover:bg-secondary/80 border-secondary
 }
 
 a.custom {
