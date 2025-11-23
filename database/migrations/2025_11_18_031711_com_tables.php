@@ -60,6 +60,15 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('brands', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // Brand name
+            $table->string('code_name')->unique(); // Brand name
+            $table->text('description')->nullable(); // Optional description
+            $table->string('logo')->nullable(); // Optional brand logo
+            $table->timestamps();
+        });
+
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');

@@ -74,5 +74,6 @@
 </script>
 
 
+    <div id="toastContainer" class="toast-container top-right"></div>
 </body>
 </html>

@@ -7,12 +7,14 @@ use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
+use Livewire\Attributes\On;
 //use Livewire\TemporaryUploadedFile;
 
 class Products extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     // Modal States
     public $showAddModal = false;
@@ -22,13 +24,17 @@ class Products extends Component
     // Form Fields
     public $name, $brand, $sku, $category, $main_category, $measurement, $measurement_unit, $status = 1, $description;
 
-    public $images = []; // Stores all valid images
+    // product filters
+    public $searchText, $searchCategory, $searchStatus, $searchSort;
+
+    public $uploadedImages = []; // Stores all valid images
     public $newImages = []; // Temporary for file input
 
 
     // Detail View
     public $selectedProduct = null;
     public $currentImageIndex = 0;
+    public $deleteId = null;
     protected $rules = [
         'name' => 'required|string|max:255',
         'brand' => 'string|max:255',
@@ -41,27 +47,56 @@ class Products extends Component
         'newImages.*' => 'image|max:4096', // 2MB per image
     ];
 
-    public function mount()
-    {
-
-    }
-
     public function render()
     {
-        return view('livewire.admin.products')->layout('components.layout.admin');
+        $products = Product::query()->with('category')
+
+            // search by name or SKU
+            ->when($this->searchText, function ($q) {
+                $q->where('name', 'like', "%{$this->searchText}%")
+                    ->orWhere('sku', 'like', "%{$this->searchText}%");
+            })
+
+            // category filter (you will replace it with real category IDs later)
+            ->when($this->searchCategory, fn($q) => $q->where('category_id', $this->searchCategory))
+
+            // stock status filter
+            ->when($this->searchStatus !== '' && $this->searchStatus !== null, function ($q) {
+                $q->where('status', $this->searchStatus);
+            })
+
+
+            // sorting
+            ->when($this->searchSort, function ($q) {
+                if ($this->searchSort === 'latest') {
+                    $q->orderBy('created_at', 'desc');
+                } elseif ($this->searchSort === 'oldest') {
+                    $q->orderBy('created_at', 'asc');
+                } elseif ($this->searchSort === 'stock_high') {
+                    $q->orderBy('stock', 'desc');
+                } elseif ($this->searchSort === 'stock_low') {
+                    $q->orderBy('stock', 'asc');
+                }
+            })
+            ->paginate(25);
+//        dd($products);
+        return view('livewire.admin.products', compact('products'))
+            ->layout('components.layout.admin');
     }
+
 
     // Add Modal Actions
 
     public function openAddModal()
     {
-        $this->reset(['name', 'brand', 'sku', 'category', 'main_category', 'measurement', 'measurement_unit', 'status', 'description', 'newImages', 'images']);
+        $this->reset(['name', 'brand', 'sku', 'category', 'main_category', 'measurement', 'measurement_unit', 'status', 'description', 'newImages']);
+        $this->uploadedImages = [];
         $this->showAddModal = true;
     }
 
     public function removeImage($index)
     {
-        array_splice($this->images, $index, 1);
+        array_splice($this->uploadedImages, $index, 1);
     }
 
     public function saveProduct()
@@ -93,7 +128,7 @@ class Products extends Component
         $paths = [];
 
         // Only store images that are Livewire temporary uploads
-        foreach ($this->images as $image) {
+        foreach ($this->uploadedImages as $image) {
             if ($image instanceof TemporaryUploadedFile) {
                 $paths[] = $image->store('products', 'public');
             } else {
@@ -113,7 +148,7 @@ class Products extends Component
     public function closeAddModal()
     {
         $this->showAddModal = false;
-        $this->reset(['name', 'brand', 'sku', 'category', 'main_category', 'measurement', 'measurement_unit', 'status', 'description', 'newImages', 'images']);
+        $this->reset(['name', 'brand', 'sku', 'category', 'main_category', 'measurement', 'measurement_unit', 'status', 'description', 'newImages', 'uploadedImages']);
     }
 
     public function updatedNewImages()
@@ -123,11 +158,12 @@ class Products extends Component
         ]);
 
         foreach ($this->newImages as $image) {
-            if (count($this->images) < 5) {
-                $this->images[] = $image; // just store Livewire temp files
+            if (count($this->uploadedImages) < 5) {
+                $this->uploadedImages[] = $image; // just store Livewire temp files
             }
         }
 
+        $this->reset('newImages');
     }
 
 
@@ -171,4 +207,37 @@ class Products extends Component
             $this->currentImageIndex = ($this->currentImageIndex - 1 + $count) % $count;
         }
     }
+
+    public function confirmDelete($id)
+    {
+        $this->deleteId = $id;
+        $this->dispatch('show-delete-confirmation');
+    }
+
+    #[On('deleteConfirmed')]
+public function deleteConfirmed()
+{
+    $admin = auth('admin')->user();
+
+    // 1. Ensure user is actually logged in
+    if (!$admin) {
+        abort(403, 'Unauthorized');
+    }
+
+    // // 2. Ensure the admin has permission (if you use roles)
+    // if (!$admin->can('delete products')) {
+    //     abort(403, 'You do not have permission to delete products.');
+    // }
+
+    // 3. Delete
+    $product = Product::find($this->deleteId);
+
+    if ($product) {
+        $product->delete();
+        $this->dispatch('toast', type: 'success', title: 'Deleted!', message: 'Product has been deleted.');
+    }
+
+    $this->deleteId = null;
+}
+
 }
