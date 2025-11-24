@@ -3,6 +3,7 @@
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Products;
 use App\Livewire\Auth\Login;
+use App\Livewire\Categories;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/', function () {
@@ -27,6 +28,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/dashboard', Dashboard::class)->name('dashboard');
         Route::get('/products', Products::class)->name('products');
+        Route::get('/categories', Categories::class)->name('categories');
 
     });
 

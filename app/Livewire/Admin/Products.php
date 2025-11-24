@@ -4,12 +4,12 @@ namespace App\Livewire\Admin;
 
 use App\Models\Product;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
-use Livewire\Attributes\On;
 //use Livewire\TemporaryUploadedFile;
 
 class Products extends Component
@@ -78,8 +78,8 @@ class Products extends Component
                     $q->orderBy('stock', 'asc');
                 }
             })
-            ->paginate(25);
-//        dd($products);
+            ->paginate(5);
+
         return view('livewire.admin.products', compact('products'))
             ->layout('components.layout.admin');
     }
@@ -215,29 +215,22 @@ class Products extends Component
     }
 
     #[On('deleteConfirmed')]
-public function deleteConfirmed()
-{
-    $admin = auth('admin')->user();
+    public function deleteConfirmed()
+    {
+        $admin = auth('admin')->user();
 
-    // 1. Ensure user is actually logged in
-    if (!$admin) {
-        abort(403, 'Unauthorized');
+        if (!$admin) {
+            abort(403, 'Unauthorized');
+        }
+
+        $product = Product::find($this->deleteId);
+
+        if ($product) {
+            $product->delete();
+            $this->dispatch('toast', type: 'success', title: 'Deleted!', message: 'Product has been deleted.');
+        }
+
+        $this->deleteId = null;
     }
-
-    // // 2. Ensure the admin has permission (if you use roles)
-    // if (!$admin->can('delete products')) {
-    //     abort(403, 'You do not have permission to delete products.');
-    // }
-
-    // 3. Delete
-    $product = Product::find($this->deleteId);
-
-    if ($product) {
-        $product->delete();
-        $this->dispatch('toast', type: 'success', title: 'Deleted!', message: 'Product has been deleted.');
-    }
-
-    $this->deleteId = null;
-}
 
 }

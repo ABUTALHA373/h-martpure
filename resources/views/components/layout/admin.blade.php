@@ -28,7 +28,7 @@
         </div>
         {{-- Sidebar + Content --}}
 
-        <div class="bg-bg-secondary p-8 text-sm overflow-y-auto h-full" id="mainContent">
+        <div class="bg-bg-secondary p-3 md:p-8 text-sm overflow-y-auto h-full" id="mainContent">
             {{ $slot }}
         </div>
     </div>
@@ -74,6 +74,6 @@
 </script>
 
 
-    <div id="toastContainer" class="toast-container top-right"></div>
+<div id="toastContainer" class="toast-container top-right"></div>
 </body>
 </html>
