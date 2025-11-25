@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin;
 
 use App\Models\Category;
 use Illuminate\Support\Str;
@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class Categories extends Component
 {
-    public $addCategoryModal = false;
+    public $manageCategoryModal = false;
     public $name, $parent, $status = 1, $display_order = 0, $description;
 
     public $rules = [
@@ -21,24 +21,22 @@ class Categories extends Component
     public function render()
     {
         $parentCategories = Category::select(['id', 'name'])->whereNull('parent_id')->get();
-        $categories = Category::whereNull('parent_id')->with('children')->get();
+        $categories = Category::whereNull('parent_id')->with('children')->get()->sortBy('name');
 
-        return view('livewire.categories')
+        return view('livewire.admin.categories')
             ->with('parentCategories', $parentCategories)
             ->with('categories', $categories)
             ->layout('components.layout.admin');
     }
 
-    public function openAddCategoryModal()
-    {
-        $this->reset(['name', 'parent', 'display_order', 'status', 'description']);
-        $this->addCategoryModal = true;
-    }
 
-    public function closeAddCategoryModal()
+    public function saveCategory($id = null)
     {
-        $this->reset(['name', 'parent', 'display_order', 'status', 'description']);
-        $this->addCategoryModal = false;
+        if ($id) {
+            $this->updateCategory();
+        } else {
+            $this->addCategory();
+        }
     }
 
     public function addCategory()
@@ -60,7 +58,7 @@ class Categories extends Component
 
         $success = Category::create([
             'name' => ucwords($this->name),
-            'parent_id' => $this->parent ?? null,
+            'parent_id' => $this->parent ?: null,
             'status' => $this->status,
             'slug' => $slug,
             'display_order' => $this->display_order,
@@ -70,7 +68,25 @@ class Categories extends Component
         if ($success) {
             $this->dispatch('toast', type: 'success', title: 'New Category!', message: 'New Category has been created.');
         }
-        $this->addCategoryModal = false;
+        $this->manageCategoryModal = false;
 
+    }
+
+
+    public function openManageCategoryModal()
+    {
+        $this->resetCategoryModal();
+        $this->manageCategoryModal = true;
+    }
+
+    public function closeManageCategoryModal()
+    {
+        $this->resetCategoryModal();
+        $this->manageCategoryModal = false;
+    }
+
+    public function resetCategoryModal()
+    {
+        $this->reset(['name', 'parent', 'display_order', 'status', 'description']);
     }
 }

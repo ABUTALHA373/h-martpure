@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
         ]);
+        Role::firstOrCreate([
+            'name' => 'super-admin',
+            'guard_name' => 'admin',
+        ]);
+        $admin = Admin::first();
+
+        if ($admin) {
+            $admin->assignRole('super-admin');
+        }
 
         $this->call([
             ProductSeeder::class,

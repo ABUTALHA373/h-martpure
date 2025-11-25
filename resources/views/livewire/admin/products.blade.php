@@ -54,13 +54,6 @@
 
         {{-- Sort --}}
         <div class="md:col-span-2">
-            {{--            @php--}}
-            {{--                $options = collect($persons)->map(fn($p) =>     [--}}
-            {{--            'label' => $p['name'],      // Visible text--}}
-            {{--            'value' => $p['roll'],      // Actual value--}}
-            {{--                ])->toArray();--}}
-            {{--            @endphp--}}
-
 
             <x-others.select
                 wire:model.live="searchSort"
@@ -68,6 +61,8 @@
                 :options="[
                     ['label' => 'Latest', 'value' => 'latest'],
                     ['label' => 'Oldest', 'value' => 'oldest'],
+                    ['label' => 'Name (A-Z)', 'value' => 'az'],
+                    ['label' => 'Name (Z-A)', 'value' => 'za'],
                     ['label' => 'Stock High → Low', 'value' => 'stock_high'],
                     ['label' => 'Stock Low → High', 'value' => 'stock_low']
                 ]"

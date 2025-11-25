@@ -1,14 +1,13 @@
 <?php
 
+use App\Livewire\Admin\AdminRole;
+use App\Livewire\Admin\Categories;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Products;
 use App\Livewire\Auth\Login;
-use App\Livewire\Categories;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/', function () {
-//    return view('pages.home');
-//});
+
 Route::get('/login', Login::class)->name('login');
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -16,12 +15,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('auth.admin')->group(function () {
 
-//        Route::post('/logout', function () {
-//            Auth::guard('admin')->logout();
-//            session()->invalidate();
-//            session()->regenerateToken();
-//            return redirect()->route('admin.login');
-//        })->name('logout');
         Route::get('/', (function () {
             return redirect()->route('admin.dashboard');
         }));
@@ -29,6 +22,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', Dashboard::class)->name('dashboard');
         Route::get('/products', Products::class)->name('products');
         Route::get('/categories', Categories::class)->name('categories');
+        Route::get('/adminRole', AdminRole::class)->name('adminRole');
 
     });
 

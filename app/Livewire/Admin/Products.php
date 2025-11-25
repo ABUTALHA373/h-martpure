@@ -25,7 +25,7 @@ class Products extends Component
     public $name, $brand, $sku, $category, $main_category, $measurement, $measurement_unit, $status = 1, $description;
 
     // product filters
-    public $searchText, $searchCategory, $searchStatus, $searchSort;
+    public $searchText, $searchCategory, $searchStatus, $searchSort = 'latest';
 
     public $uploadedImages = []; // Stores all valid images
     public $newImages = []; // Temporary for file input
@@ -49,7 +49,7 @@ class Products extends Component
 
     public function render()
     {
-        $products = Product::query()->with('category')
+        $products = Product::with('category')
 
             // search by name or SKU
             ->when($this->searchText, function ($q) {
@@ -74,6 +74,10 @@ class Products extends Component
                     $q->orderBy('created_at', 'asc');
                 } elseif ($this->searchSort === 'stock_high') {
                     $q->orderBy('stock', 'desc');
+                } elseif ($this->searchSort === 'az') {
+                    $q->orderBy('name', 'asc');
+                } elseif ($this->searchSort === 'za') {
+                    $q->orderBy('name', 'desc');
                 } elseif ($this->searchSort === 'stock_low') {
                     $q->orderBy('stock', 'asc');
                 }

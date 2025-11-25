@@ -1,22 +1,32 @@
 import './bootstrap';
 import Swal from 'sweetalert2';
+
 window.Swal = Swal;
 
 
-// =====================TOAST===================
+// ===============================TOAST=============================
+//types : success,warning,info,error
+// ===============================TOAST=============================
+
 class ToastManager {
     constructor() {
         this.toasts = new Map();
-        this.container = document.getElementById('toastContainer');
         this.toastId = 0;
     }
 
+    getContainer() {
+        return document.getElementById('toastContainer');
+    }
+
     show(options = {}) {
+        const container = this.getContainer();
+        if (!container) return;
+
         const id = ++this.toastId;
         const toast = this.createToast(id, options);
 
         this.toasts.set(id, toast);
-        this.container.appendChild(toast.element);
+        container.appendChild(toast.element);
 
         // Trigger animation
         requestAnimationFrame(() => {
@@ -87,7 +97,7 @@ class ToastManager {
             }
         });
 
-        return { element, progressBar, timer: null };
+        return {element, progressBar, timer: null};
     }
 
     createActions(actions, toastId) {
@@ -212,7 +222,10 @@ class ToastManager {
     }
 
     setPosition(position) {
-        this.container.className = `toast-container ${position}`;
+        const container = this.getContainer();
+        if (container) {
+            container.className = `toast-container ${position}`;
+        }
     }
 }
 
@@ -280,7 +293,7 @@ function showPromiseToast() {
 
     const mockPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
-            Math.random() > 0.5 ? resolve({ message: 'Data loaded successfully!' }) : reject({ message: 'Failed to load data' });
+            Math.random() > 0.5 ? resolve({message: 'Data loaded successfully!'}) : reject({message: 'Failed to load data'});
         }, 3000);
     });
 
@@ -340,7 +353,8 @@ const customSwal = Swal.mixin({
     confirmButtonColor: '#00a095',
 });
 
-document.addEventListener('livewire:initialized', () => {
+// Livewire Event Listeners
+function initLivewireEvents() {
     Livewire.on('show-delete-confirmation', () => {
         customSwal.fire({
             title: 'Are you sure?',
@@ -361,10 +375,19 @@ document.addEventListener('livewire:initialized', () => {
         // Handle data which might be an array or object depending on dispatch
         // If dispatched as named arguments: { type: '...', title: '...', message: '...' }
         // If data comes wrapped in an array (common in some versions), unwrap it.
-        const { type, title, message } = data;
+        const {type, title, message} = data;
         showToast(type, title, message);
     });
-});
+}
+
+// Initialize listeners
+if (window.Livewire) {
+    initLivewireEvents();
+} else {
+    document.addEventListener('livewire:initialized', () => {
+        initLivewireEvents();
+    });
+}
 
 // Make functions global
 window.showToast = showToast;
@@ -377,6 +400,9 @@ window.clearAllToasts = clearAllToasts;
 
 // Auto-demo on load
 setTimeout(() => {
-    showToast('info', 'Welcome! 👋', 'Try out the different toast options above');
+    // Only show if we are on a page with the demo controls, or just skip it to avoid errors on login page
+    if (document.getElementById('toastContainer')) {
+        showToast('error', 'Welcome! 👋', 'Try out the different toast options above');
+    }
 }, 1000);
 // =====================TOAST===================

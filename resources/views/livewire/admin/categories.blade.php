@@ -5,7 +5,7 @@
             <h1 class="text-3xl font-bold text-text-primary">Categories</h1>
             <p class="text-text-secondary mt-1">Manage your product categories and subcategories here</p>
         </div>
-        <button wire:click="openAddCategoryModal"
+        <button wire:click="openManageCategoryModal"
                 class="btn btn-primary w-full sm:w-auto flex items-center justify-center gap-2 py-3 px-4 text-lg whitespace-nowrap">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
@@ -185,11 +185,11 @@
     </div>
 
     {{-- Add Category Modal --}}
-    @if($addCategoryModal)
+    @if($manageCategoryModal)
         <x-others.modal>
             <div class="p-4 sm:p-6 border-b border-custom flex justify-between items-center">
                 <h2 class="text-xl font-bold text-text-primary">Add New Category</h2>
-                <button wire:click="closeAddCategoryModal"
+                <button wire:click="closeManageCategoryModal"
                         class="text-text-secondary hover:text-text-primary cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                          stroke="currentColor" class="size-6">
@@ -261,11 +261,11 @@
                 </div>
             </div>
             <div class="p-4 sm:p-6 border-t border-custom flex justify-end gap-3">
-                <button wire:click="closeAddCategoryModal" class="btn btn-tertiary ">
+                <button wire:click="closeManageCategoryModal" class="btn btn-tertiary ">
                     Cancel
                 </button>
-                <button wire:click="addCategory" class="btn btn-primary">
-                    <svg fill="#ffffff" wire:loading wire:target="addCategory"
+                <button wire:click="saveCategory($updateId)" class="btn btn-primary">
+                    <svg fill="#ffffff" wire:loading wire:target="saveCategory"
                          class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"
                          xmlns="http://www.w3.org/2000/svg">
                         <g>
