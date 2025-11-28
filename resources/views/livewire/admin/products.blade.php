@@ -75,17 +75,17 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead
-                    class="bg-bg-secondary text-text-primary font-semibold uppercase tracking-wider border-b border-custom">
+                    class="bg-bg-secondary text-text-secondary text-xs font-semibold uppercase tracking-wider border-b border-custom">
                 <tr>
                     <th scope="col" class="w-8 pl-6 pr-3 py-4 text-text-secondary">#</th>
-                    <th scope="col" class="px-3 py-4">Product</th>
-                    <th scope="col" class="px-3 py-4">Slug</th>
-                    <th scope="col" class="px-3 py-4">Brand</th>
-                    <th scope="col" class="px-3 py-4">Category</th>
-                    <th scope="col" class="px-3 py-4">Measurement</th>
-                    <th scope="col" class="px-3 py-4">Sales Count</th>
-                    <th scope="col" class="px-3 py-4">Status</th>
-                    <th scope="col" class="px-3 py-4 text-right">Actions</th>
+                    <th scope="col" class="px-3 py-3">Product</th>
+                    <th scope="col" class="px-3 py-3">Slug</th>
+                    <th scope="col" class="px-3 py-3">Brand</th>
+                    <th scope="col" class="px-3 py-3">Category</th>
+                    <th scope="col" class="px-3 py-3">Measurement</th>
+                    <th scope="col" class="px-3 py-3">Sales Count</th>
+                    <th scope="col" class="px-3 py-3">Status</th>
+                    <th scope="col" class="pl-3 pr-6 py-3 text-right">Actions</th>
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-custom">

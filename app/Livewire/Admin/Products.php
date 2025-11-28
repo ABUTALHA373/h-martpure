@@ -215,10 +215,10 @@ class Products extends Component
     public function confirmDelete($id)
     {
         $this->deleteId = $id;
-        $this->dispatch('show-delete-confirmation');
+        $this->dispatch('confirmSwal', dpText: 'deleteProductConfirmed');
     }
 
-    #[On('deleteConfirmed')]
+    #[On('deleteProductConfirmed')]
     public function deleteConfirmed()
     {
         $admin = auth('admin')->user();

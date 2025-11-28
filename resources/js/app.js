@@ -355,26 +355,25 @@ const customSwal = Swal.mixin({
 
 // Livewire Event Listeners
 function initLivewireEvents() {
-    Livewire.on('show-delete-confirmation', () => {
+    Livewire.on('confirmSwal', (data) => {
+        const buttonText = data.buttonText ?? "Yes, delete it!";
+        const dpText = data.dpText ?? "deleteConfirmed";
         customSwal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonText: buttonText,
             cancelButtonText: 'Cancel',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                Livewire.dispatch('deleteConfirmed');
+                Livewire.dispatch(dpText);
             }
         });
     });
 
     Livewire.on('toast', (data) => {
-        // Handle data which might be an array or object depending on dispatch
-        // If dispatched as named arguments: { type: '...', title: '...', message: '...' }
-        // If data comes wrapped in an array (common in some versions), unwrap it.
         const {type, title, message} = data;
         showToast(type, title, message);
     });

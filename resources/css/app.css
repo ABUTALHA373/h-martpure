@@ -55,11 +55,15 @@
 }
 
 .btn {
-    @apply flex justify-center gap-1 rounded-md px-3 py-2 text-sm font-semibold border cursor-pointer transition-colors outline-none
+    @apply flex justify-center items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold border cursor-pointer transition-colors outline-none
 }
 
 .btn-tertiary {
     @apply text-secondary bg-bg-primary hover:bg-secondary/10 border-secondary
+}
+
+.btn-warning {
+    @apply rounded-md text-white  hover:bg-yellow-500/80 border-yellow-500
 }
 
 .btn-primary {
@@ -68,6 +72,23 @@
 
 a.custom {
     @apply text-secondary hover:underline
+}
+
+button:active {
+    transform: scale(0.97);
+    @apply transition-all
+}
+
+.password-eye {
+    @apply absolute top-2 right-2 cursor-pointer;
+}
+
+input[type="checkbox"] {
+    @apply relative flex items-center justify-center appearance-none outline-none cursor-pointer w-5 h-5 border border-secondary dark:border-secondary checked:bg-secondary checked:border-secondary dark:checked:border-secondary after:content-[''] after:bg-center after:object-cover  after:w-3 after:h-3 after:absolute after:bg-no-repeat checked:after:bg-[url('data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjZmZmZmZmIj4gCiAgPHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJtNC41IDEyLjc1IDYgNiA5LTEzLjUiIC8+Cjwvc3ZnPgo=')];
+}
+
+input[type="radio"] {
+    @apply relative flex items-center justify-center appearance-none outline-none cursor-pointer w-5 h-5 rounded-full border border-secondary dark:border-secondary checked:bg-secondary checked:border-secondary dark:checked:border-secondary after:content-[''] after:absolute after:w-2 after:h-2 after:rounded-full checked:after:bg-secondary;
 }
 
 

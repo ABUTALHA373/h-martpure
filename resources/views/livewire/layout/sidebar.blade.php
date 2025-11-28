@@ -48,7 +48,7 @@
         </svg>
 
 
-        Admin Roles
+        Admins & Roles
     </a>
     @php
         }

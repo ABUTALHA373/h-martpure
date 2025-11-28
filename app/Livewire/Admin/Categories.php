@@ -75,6 +75,7 @@ class Categories extends Component
 
     public function openManageCategoryModal()
     {
+        $this->resetValidation();
         $this->resetCategoryModal();
         $this->manageCategoryModal = true;
     }
