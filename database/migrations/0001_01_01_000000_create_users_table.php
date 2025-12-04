@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('status', ['pending', 'active', 'blocked', 'disabled'])->default('active');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -23,9 +24,10 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('user_type')->unique();
+            $table->string('user_type');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('status', ['pending', 'active', 'blocked', 'disabled'])->default('blocked');
             $table->rememberToken();
             $table->timestamps();
         });

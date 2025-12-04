@@ -9,6 +9,9 @@ use App\Livewire\Admin\Products;
 use App\Livewire\Auth\Login;
 use Illuminate\Support\Facades\Route;
 
+Route::get('test', function () {
+    return 'test';
+})->name('test');
 
 Route::get('/login', Login::class)->name('login');
 Route::prefix('admin')->name('admin.')->group(function () {

@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Admin;
 
-use App\Mail\TestMail;
+use App\Mail\SendMail;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
+use Throwable;
 
 #[Layout('components.layout.admin')]
 class AdminRole extends Component
@@ -16,19 +17,31 @@ class AdminRole extends Component
     public $role_name;
     public $showAddModal = false;
     public $showAddAdminModal = false;
+    public $showStatusModal = false;
     public $deleteRoleName = null, $adminId = null, $deleteUserRoleName = null;
-    public $name, $email;
-    public $searchAdmin = '';
+    public $name, $email, $password;
+    public $statusAdminId, $updateStatus;
+
+    protected $rules = [
+        'name' => 'required',
+        'email' => 'required|email|unique:admins,email',
+        'password' => [
+            'required',
+            'string',
+            'min:8',
+            'regex:/[a-zA-Z]/',
+            'regex:/[0-9]/',
+            'regex:/[@$!%*#?&]/',
+        ],
+    ];
+    protected $messages = [
+        'password.regex' => 'Password must include letters, numbers, and special characters.',
+    ];
 
     public function render()
     {
         $roles = Role::where('guard_name', 'admin')->get();
-
         $admins = Admin::with('roles')
-            ->when($this->searchAdmin, function ($query) {
-                $query->where('name', 'like', '%' . $this->searchAdmin . '%')
-                    ->orWhere('email', 'like', '%' . $this->searchAdmin . '%');
-            })
             ->get();
 
         return view('livewire.admin.admin-role', compact('roles', 'admins'));
@@ -37,10 +50,10 @@ class AdminRole extends Component
     public function openAddModal()
     {
         $this->resetValidation();
-        $this->sendTestEmail();
         $this->role_name = '';
         $this->showAddModal = true;
     }
+
 
     public function createRole()
     {
@@ -136,6 +149,7 @@ class AdminRole extends Component
         $this->resetValidation();
         $this->name = '';
         $this->email = '';
+        $this->password = '';
         $this->showAddAdminModal = true;
     }
 
@@ -143,14 +157,96 @@ class AdminRole extends Component
     {
         $this->name = '';
         $this->email = '';
+        $this->password = '';
         $this->showAddAdminModal = false;
     }
 
-    public function sendTestEmail()
+    public function createAdminUser()
     {
-        Mail::to('abutalha5896@gmail.com')->send(new TestMail('Hello from Livewire!'));
+        $this->validate();
 
-        $this->dispatch('toast', type: 'success', title: 'Email Sent', message: 'SMTP email sent successfully!');
+        $adminName = $this->name;
+        $adminEmail = $this->email;
+        $adminPassword = $this->password;
+
+        $admin = auth('admin')->user()->hasRole('super-admin');
+        if (!$admin) {
+            abort(403, 'Unauthorized');
+        }
+        $createdAdmin = Admin::create([
+            'name' => $adminName,
+            'email' => $adminEmail,
+            'password' => bcrypt($adminPassword),
+            'user_type' => 'admin',
+            'status' => 'active',
+        ]);
+        if (!$createdAdmin) {
+            $this->dispatch('toast', type: 'error', title: 'Error!', message: 'Unable to create admin user.');
+            return;
+        }
+        $this->closeAddAdminModal();
+        $this->dispatch('toast', type: 'success', title: 'Created!', message: 'New admin user has been created.');
+
+        $this->sendNewAdminsCreds($adminEmail, $adminPassword);
     }
+
+    public function sendNewAdminsCreds($email, $password)
+    {
+        try {
+
+            Mail::to($email)->send(new SendMail($email, $password, 'Your Account Details'));
+
+            // Success toast
+            $this->dispatch('toast',
+                type: 'success',
+                title: 'Password Sent!',
+                message: 'Password has been sent to ' . $email . '!'
+            );
+
+        } catch (Throwable $e) {
+
+            // Error toast
+            $this->dispatch('toast',
+                type: 'error',
+                title: 'Email Failed!',
+                message: 'Unable to send email to ' . $email . '. Please check SMTP configuration.'
+            );
+        }
+    }
+
+    public function openStatusModal($id, $status)
+    {
+        $this->statusAdminId = $id;
+        $this->updateStatus = $status;
+        $this->showStatusModal = true;
+    }
+
+    public function closeStatusModal()
+    {
+        $this->showStatusModal = false;
+        $this->statusAdminId = null;
+        $this->updateStatus = null;
+    }
+
+    public function updateAdminStatus()
+    {
+        $admin = Admin::find($this->statusAdminId);
+        if (!$admin) {
+            $this->dispatch('toast', type: 'error', title: 'Error!', message: 'Admin not found.');
+            return;
+        }
+
+        if ($admin->user_type === 'system-admin') {
+            $this->dispatch('toast', type: 'error', title: 'Restricted!', message: 'Cannot change system admin status.');
+            return;
+        }
+
+        $admin->status = $this->updateStatus;
+        $admin->save();
+
+        $this->closeStatusModal();
+        $this->dispatch('toast', type: 'success', title: 'Updated!', message: 'Admin status updated successfully.');
+    }
+
 
 }

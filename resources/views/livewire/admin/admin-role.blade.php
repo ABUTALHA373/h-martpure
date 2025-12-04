@@ -99,6 +99,7 @@
                     <th scope="col" class="px-3 py-3">Assigned Role</th>
                     <th scope="col" class="px-3 py-3">Custom Permission</th>
                     <th scope="col" class="px-3 py-3">Last Update</th>
+                    <th scope="col" class="px-3 py-3">Status</th>
                     <th scope="col" class="pl-3 pr-6 py-3 text-right">Actions</th>
                 </tr>
                 <tbody class="divide-y divide-custom">
@@ -139,6 +140,36 @@
                             @endif
                         </td>
                         <td class="px-3 py-3">{{$admin->created_at->format('l, d-m-Y')}}</td>
+                        <td class="px-3 py-3">
+                            @php
+                                $statusColors = [
+                                    'pending' => 'bg-yellow-500/10 text-yellow-500 border-yellow-500',
+                                    'active' => 'bg-green-500/10 text-green-500 border-green-500',
+                                    'blocked' => 'bg-red-500/10 text-red-500 border-red-500',
+                                    'disabled' => 'bg-gray-500/10 text-gray-500 border-gray-500',
+                                ];
+                                $colorClass = $statusColors[$admin->status] ?? 'bg-gray-500/10 text-gray-500 border-gray-500';
+                            @endphp
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="px-2.5 py-1 rounded-md text-xs font-medium border {{ $colorClass }} capitalize">
+                                    {{ $admin->status }}
+                                </span>
+                                @if($admin->user_type !== 'system-admin')
+                                    <button wire:click="openStatusModal({{ $admin->id }}, '{{ $admin->status }}')"
+                                            class="text-text-secondary hover:text-secondary transition-colors cursor-pointer"
+                                            title="Change Status">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                             class="size-4">
+                                            <path fill-rule="evenodd"
+                                                  d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 0 1 .615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 0 0-1.06 1.061l2.999 3a.75.75 0 0 0 1.06 0l3.001-3a.75.75 0 1 0-1.06-1.06l-1.748 1.747a41.31 41.31 0 0 0-.264-3.386 2.18 2.18 0 0 0-1.97-1.913 41.512 41.512 0 0 0-7.477 0 2.18 2.18 0 0 0-1.969 1.913 41.16 41.16 0 0 0-.16 1.61.75.75 0 1 0 1.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 0 1 .615-.597A40.012 40.012 0 0 1 10 4.5ZM5.281 9.22a.75.75 0 0 0-1.06 0l-3.001 3a.75.75 0 1 0 1.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 0 0 1.97 1.913 41.533 41.533 0 0 0 7.477 0 2.18 2.18 0 0 0 1.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 1 0-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 0 1-.615.597 40.013 40.013 0 0 1-7.208 0 .68.68 0 0 1-.615-.597 39.785 39.785 0 0 1-.25-3.15l1.689 1.69a.75.75 0 0 0 1.06-1.061l-2.999-3Z"
+                                                  clip-rule="evenodd"/>
+                                        </svg>
+
+                                    </button>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-3 py-3 text-right">
                             @if ($admin->user_type === 'system-admin')
                                 <span
@@ -216,10 +247,11 @@
     <!-- Assign Role Modal -->
     <!-- Add Role Modal -->
     @if($showAddAdminModal)
-        <x-others.modal>
+        <x-others.modal class="w-lg">
             <div class="p-4 sm:p-6 border-b border-custom flex justify-between items-center">
                 <h2 class="text-xl font-bold text-text-primary">Create New Admin User</h2>
-                <button wire:click="closeAddModal" class="text-text-secondary hover:text-text-primary cursor-pointer">
+                <button wire:click="closeAddAdminModal"
+                        class="text-text-secondary hover:text-text-primary cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                          stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
@@ -230,7 +262,7 @@
                 <div>
                     <label class="block text-sm font-medium mb-1">Full Name</label>
                     <x-others.input wire:model.defer="name" class="w-full bg-bg-secondary"
-                                    placeholder="Enter role name"/>
+                                    placeholder="Enter admin name"/>
                     @error('name')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -240,6 +272,32 @@
                     <x-others.input wire:model="email" class="w-full bg-bg-secondary"
                                     placeholder="Enter valid email"/>
                     @error('email')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Password</label>
+                    <div class="relative" x-data="{ show: false }">
+                        <x-others.input x-bind:type="show ? 'text' : 'password'" wire:model.defer="password"
+                                        class="w-full bg-bg-secondary pr-10"
+                                        placeholder="Enter password"/>
+                        <button type="button" @click="show = !show"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-text-secondary hover:text-text-primary cursor-pointer focus:outline-none">
+                            <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                            <svg x-show="show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 stroke-width="1.5" stroke="currentColor" class="size-5" style="display: none;">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                            </svg>
+                        </button>
+                    </div>
+                    @error('password')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -262,4 +320,59 @@
         </x-others.modal>
     @endif
     <!-- Assign Role Modal -->
+
+    <!-- Status Change Modal -->
+    @if($showStatusModal)
+        <x-others.modal class="w-lg overflow-visible">
+            <div class="p-4 sm:p-6 border-b border-custom flex justify-between items-center">
+                <h2 class="text-xl font-bold text-text-primary">Update Status</h2>
+                <button wire:click="closeStatusModal"
+                        class="text-text-secondary hover:text-text-primary cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 sm:p-6 space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Status</label>
+                    {{--                    <select wire:model="updateStatus"--}}
+                    {{--                            class="w-full bg-bg-secondary border border-custom rounded-md px-3 py-2 outline-none focus:border-secondary transition-colors">--}}
+                    {{--                        <option value="pending">Pending</option>--}}
+                    {{--                        <option value="active">Active</option>--}}
+                    {{--                        <option value="blocked">Blocked</option>--}}
+                    {{--                        <option value="disabled">Disabled</option>--}}
+                    {{--                    </select>--}}
+                    <x-others.select
+                        class="bg-bg-secondary"
+                        wire:model.defer="updateStatus"
+                        placeholder="Update Status"
+                        :options="[
+                                ['label' => 'Pending', 'value' => 'pending'],
+                                ['label' => 'Active', 'value' => 'active'],
+                                ['label' => 'Blocked', 'value' => 'blocked'],
+                                ['label' => 'Disabled', 'value' => 'disabled']
+                            ]"
+                    />
+                </div>
+
+            </div>
+            <div class="p-4 sm:p-6 border-t border-custom flex justify-end gap-3">
+                <button wire:click="closeStatusModal" class="btn btn-tertiary">
+                    Cancel
+                </button>
+                <button wire:click="updateAdminStatus" class="btn btn-primary">
+                    <svg fill="#ffffff" wire:loading wire:target="updateAdminStatus"
+                         class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <path d="M8,1V2.8A5.2,5.2,0,1,1,2.8,8H1A7,7,0,1,0,8,1Z"/>
+                        </g>
+                    </svg>
+                    Update Status
+                </button>
+            </div>
+        </x-others.modal>
+    @endif
 </div>

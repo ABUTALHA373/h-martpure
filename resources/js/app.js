@@ -345,11 +345,10 @@ function clearAllToasts() {
 const customSwal = Swal.mixin({
     customClass: {
         confirmButton: 'btn btn-primary',
-        cancelButton: 'btn btn-tertiary'
+        cancelButton: 'btn btn-tertiary',
+        popup: 'custom-swal-popup'
     },
     buttonsStyling: true,
-    background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
-    color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000',
     confirmButtonColor: '#00a095',
 });
 
@@ -398,10 +397,10 @@ window.updatePosition = updatePosition;
 window.clearAllToasts = clearAllToasts;
 
 // Auto-demo on load
-setTimeout(() => {
-    // Only show if we are on a page with the demo controls, or just skip it to avoid errors on login page
-    if (document.getElementById('toastContainer')) {
-        showToast('error', 'Welcome! 👋', 'Try out the different toast options above');
-    }
-}, 1000);
+// setTimeout(() => {
+//     // Only show if we are on a page with the demo controls, or just skip it to avoid errors on login page
+//     if (document.getElementById('toastContainer')) {
+//         showToast('error', 'Welcome! 👋', 'Try out the different toast options above');
+//     }
+// }, 1000);
 // =====================TOAST===================
