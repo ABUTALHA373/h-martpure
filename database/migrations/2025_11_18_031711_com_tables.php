@@ -154,6 +154,24 @@ return new class extends Migration {
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
+
+        Schema::create('admin_activity_logs', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('admin_id');
+            $table->string('event_type', 100);
+            $table->string('model')->nullable();
+            $table->unsignedBigInteger('model_id')->nullable();
+            $table->string('action', 100);
+            $table->longText('previous_data')->nullable();
+            $table->longText('new_data')->nullable();
+            $table->longText('changes')->nullable();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->timestamps();
+
+            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
+        });
+
     }
 
     /**

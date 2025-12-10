@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-hidden">
 <x-partials.head></x-partials.head>
 <body
-    class="h-[100dvh] text-black  dark:text-white transition-colors duration-300">
+    class="h-dvh text-black  dark:text-white transition-colors duration-300">
 
 <div class="grid md:grid-cols-[12rem_auto] lg:grid-cols-[16rem_auto] h-full">
     <div class="hidden md:block bg-bg-primary border-r border-custom" id="sideBar">

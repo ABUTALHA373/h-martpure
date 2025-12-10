@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\AdminPermission;
 use App\Mail\SendMail;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Mail;
@@ -14,6 +15,8 @@ use Throwable;
 #[Layout('components.layout.admin')]
 class AdminRole extends Component
 {
+    use AdminPermission;
+
     public $role_name;
     public $showAddModal = false;
     public $showAddAdminModal = false;
@@ -40,30 +43,51 @@ class AdminRole extends Component
 
     public function render()
     {
-        $roles = Role::where('guard_name', 'admin')->get();
-        $admins = Admin::with('roles')
-            ->get();
+        $roles = [];
+        $admins = [];
+        if ($this->canAdmin('role-permission.view-role')) {
+            $roles = Role::where('guard_name', 'admin')->get();
+        }
+        if ($this->canAdmin('admins.view')) {
+            $admins = Admin::with('roles')->get();
+        }
 
         return view('livewire.admin.admin-role', compact('roles', 'admins'));
     }
 
     public function openAddModal()
     {
+        $this->authorizeAdmin('role-permission.create-role');
         $this->resetValidation();
         $this->role_name = '';
         $this->showAddModal = true;
     }
 
-
     public function createRole()
     {
+        $this->authorizeAdmin('role-permission.create-role');
         $this->validate([
             'role_name' => 'required|unique:roles,name,',
         ]);
 
-        Role::create(['name' => $this->role_name, 'guard_name' => 'admin']);
-        $this->closeAddModal();
-        $this->dispatch('toast', type: 'success', title: 'Created!', message: 'New role has been created.');
+        $role = Role::create(['name' => $this->role_name, 'guard_name' => 'admin']);
+        if ($role) {
+            admin_log('created', [
+                'model' => Role::class,
+                'model_id' => $role->id,
+                'previous' => null,
+                'new' => [
+                    'role_name' => $role->name,
+                ],
+                'changes' => [
+                    'role_name' => $role->name,
+                ],
+            ]);
+            $this->closeAddModal();
+            $this->dispatch('toast', type: 'success', title: 'Created!', message: 'New role has been created.');
+        } else {
+            $this->dispatch('toast', type: 'error', title: 'Error!', message: 'Failed to create role.');
+        }
     }
 
     public function closeAddModal()
@@ -74,8 +98,14 @@ class AdminRole extends Component
 
     public function confirmRemoveRole($adminId, $roleName)
     {
+        $this->authorizeAdmin('admins.update-status');
+
         $this->adminId = $adminId;
         $admin = Admin::find($this->adminId);
+        if (auth('admin')->user()->id == $admin->id) {
+            $this->dispatch('toast', type: 'error', title: 'Restricted!', message: 'Cannot remove own admin role.');
+            return;
+        }
         $this->deleteUserRoleName = $roleName;
         if ($admin->user_type === 'system-admin' && $this->deleteUserRoleName === 'super-admin') {
             $this->dispatch('toast', type: 'error', title: 'Restricted!', message: "Cannot remove system admin's role.");
@@ -91,9 +121,22 @@ class AdminRole extends Component
 
         if ($userAdmin->hasRole('super-admin')) {
             $admin = Admin::find($this->adminId);
-
+            $previousRoles = $admin->roles->pluck('name')->toArray();
             if ($admin) {
-                $admin->removeRole($this->deleteUserRoleName);
+                $admin->removeRole([$this->deleteUserRoleName]);
+                admin_log('deleted', [
+                    'model' => Role::class,
+                    'model_id' => $admin->id,
+                    'previous' => [
+                        'previous_role' => $previousRoles
+                    ],
+                    'new' => [
+                        'roles' => $admin->roles->pluck('name')->toArray(),
+                    ],
+                    'changes' => [
+                        'removed_role' => $this->deleteUserRoleName,
+                    ],
+                ]);
                 $this->dispatch('toast', type: 'success', title: 'Removed!', message: 'Role has been removed.');
             } else {
                 $this->dispatch('toast', type: 'error', title: 'Not fund!', message: 'User not found.');
@@ -108,6 +151,8 @@ class AdminRole extends Component
 
     public function confirmDeleteRole($deleteRoleName)
     {
+        $this->authorizeAdmin('role-permission.delete-role');
+
         $this->deleteRoleName = $deleteRoleName;
         if ($this->deleteRoleName == 'super-admin') {
             $this->dispatch('toast', type: 'error', title: 'Restricted!', message: 'Cannot delete super admin role.');
@@ -119,33 +164,45 @@ class AdminRole extends Component
     #[On('confirmDeleteRole')]
     public function deleteRole()
     {
-        $userAdmin = auth('admin')->user();
-        if ($userAdmin->hasRole('super-admin')) {
 
-            $role = Role::where('name', $this->deleteRoleName)->first();
+        $this->authorizeAdmin('role-permission.delete-role');
 
-            if (!$role) {
-                $this->dispatch('toast', type: 'error', title: 'Not Found', message: 'Role not found.');
-                return;
-            }
+        $role = Role::where('name', $this->deleteRoleName)->first();
 
-            if ($role->users()->count() > 0) {
-                $this->dispatch('toast', type: 'error', title: 'Cannot Delete', message: 'This role is assigned to users.');
-                return;
-            }
-
-            $role->delete();
-            $this->dispatch('toast', type: 'success', title: 'Deleted!', message: 'Role deleted successfully!');
-
-        } else {
-            abort(403, 'Unauthorized');
+        if (!$role) {
+            $this->dispatch('toast', type: 'error', title: 'Not Found', message: 'Role not found.');
+            return;
         }
+
+        if ($role->users()->count() > 0) {
+            $this->dispatch('toast', type: 'error', title: 'Cannot Delete', message: 'This role is assigned to users.');
+            return;
+        }
+
+        admin_log('deleted', [
+            'model' => Role::class,
+            'model_id' => $role->id,
+            'previous' => [
+                'role_name' => $role->name
+            ],
+            'new' => [],
+            'changes' => [
+                'role_name' => $role->name
+            ]
+        ]);
+        $role->delete();
+        $this->dispatch('toast', type: 'success', title: 'Deleted!', message: 'Role deleted successfully!');
+
+
         $this->deleteRoleName = null;
     }
 
 
     public function openAddAdminModal()
     {
+
+        $this->authorizeAdmin('admins.create');
+
         $this->resetValidation();
         $this->name = '';
         $this->email = '';
@@ -163,6 +220,8 @@ class AdminRole extends Component
 
     public function createAdminUser()
     {
+        $this->authorizeAdmin('admins.create');
+
         $this->validate();
 
         $adminName = $this->name;

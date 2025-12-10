@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\LogAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
+    use LogAdminActivity;
+
     protected $table = 'products';
     protected $guarded = [];
 

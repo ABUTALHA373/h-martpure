@@ -361,6 +361,7 @@ function initLivewireEvents() {
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
             icon: 'warning',
+            heightAuto: false,
             showCancelButton: true,
             confirmButtonText: buttonText,
             cancelButtonText: 'Cancel',

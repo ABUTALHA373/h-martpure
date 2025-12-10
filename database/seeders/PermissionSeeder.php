@@ -14,9 +14,6 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
 
-            'Global' => [
-                'delete', 'edit'
-            ],
             'dashboard' => [
                 'view',
             ],
@@ -30,42 +27,63 @@ class PermissionSeeder extends Seeder
                 'view', 'create', 'edit', 'delete',
             ],
 
-            'coupons' => [
+            'brands' => [
                 'view', 'create', 'edit', 'delete',
             ],
 
             'orders' => [
-                'view', 'update', 'delete', 'process',
-                'refund', 'assign-delivery',
+                'view', 'update', 'delete',
+                'process', 'refund', 'assign-delivery',
+                'status-update', 'tracking-update',
             ],
 
-            'customers' => [
-                'view', 'edit', 'block', 'delete',
+            'inventory' => [
+                'view', 'update', 'stock-adjustment',
+                'stock-report',
             ],
 
-            'cms' => [
+            'payments' => [
+                'view', 'verify', 'reject',
+                'transaction-update',
+            ],
+
+            'coupons-offers' => [
+                'view', 'create', 'edit', 'delete',
+                'activate', 'deactivate',
+            ],
+
+            'cms-pages' => [
                 'view', 'create', 'edit', 'delete',
                 'homepage-update', 'seo-update',
             ],
 
+            'users' => [
+                'view', 'edit', 'block', 'delete',
+                'order-history',
+            ],
+
             'admins' => [
-                'view', 'create', 'edit', 'delete',
+                'view', 'create', 'update-status', 'reset-password', 'delete',
             ],
 
-            'roles' => [
-                'view', 'create', 'edit', 'delete',
+            'role-permission' => [
+                'view-role', 'create-role', 'delete-role', 'assign-admin-role', 'remove-admin-role',
+                'manage-role-permission', 'manage-admin-permission'
             ],
 
-            'permissions' => [
-                'view', 'assign',
+            'reports' => [
+                'view', 'export',
             ],
 
             'settings' => [
                 'view', 'update',
                 'security-update', 'payment-update',
                 'shipping-update', 'notifications-update',
+                'email-update', 'theme-update',
             ],
+
         ];
+
 
         // Create all permissions
         foreach ($permissions as $group => $actions) {

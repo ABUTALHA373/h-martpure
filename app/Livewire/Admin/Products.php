@@ -82,7 +82,7 @@ class Products extends Component
                     $q->orderBy('stock', 'asc');
                 }
             })
-            ->paginate(5);
+            ->paginate(20);
 
         return view('livewire.admin.products', compact('products'))
             ->layout('components.layout.admin');
