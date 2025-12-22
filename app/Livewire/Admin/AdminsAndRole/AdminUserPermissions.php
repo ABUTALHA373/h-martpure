@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\AdminsAndRole;
 
 use App\AdminPermission;
 use App\Models\Admin;
@@ -36,7 +36,7 @@ class AdminUserPermissions extends Component
     {
         $roles = Role::all();
         $permissions = Permission::all();
-        return view('livewire.admin.admin-user-permissions', compact('roles', 'permissions'));
+        return view('livewire.admin.admins-and-role.admin-user-permissions', compact('roles', 'permissions'));
     }
 
     public function updateRoles()

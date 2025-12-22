@@ -58,12 +58,11 @@ class PermissionSeeder extends Seeder
             ],
 
             'users' => [
-                'view', 'edit', 'block', 'delete',
-                'order-history',
+                'view', 'edit', 'update-status', 'order-history',
             ],
 
             'admins' => [
-                'view', 'create', 'update-status', 'reset-password', 'delete',
+                'view', 'create', 'update-status', 'reset-password',
             ],
 
             'role-permission' => [

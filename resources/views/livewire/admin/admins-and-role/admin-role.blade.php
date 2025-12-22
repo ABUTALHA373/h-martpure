@@ -383,13 +383,6 @@
         <div class="p-4 sm:p-6 space-y-6">
             <div>
                 <label class="block text-sm font-medium mb-1">Status</label>
-                {{--                    <select wire:model="updateStatus"--}}
-                {{--                            class="w-full bg-bg-secondary border border-custom rounded-md px-3 py-2 outline-none focus:border-secondary transition-colors">--}}
-                {{--                        <option value="pending">Pending</option>--}}
-                {{--                        <option value="active">Active</option>--}}
-                {{--                        <option value="blocked">Blocked</option>--}}
-                {{--                        <option value="disabled">Disabled</option>--}}
-                {{--                    </select>--}}
                 <x-others.select
                     class="bg-bg-secondary"
                     wire:model.defer="updateStatus"

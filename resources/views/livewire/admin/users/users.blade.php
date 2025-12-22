@@ -86,19 +86,19 @@
                                     class="px-2.5 py-1 rounded-md text-xs font-medium border {{ $colorClass }} capitalize">
                                     {{ $user->status }}
                                 </span>
-                                @if($user->user_type !== 'system-admin')
-                                    <button wire:click="openStatusModal({{ $user->id }}, '{{ $user->status }}')"
-                                            class="text-text-secondary hover:text-secondary transition-colors cursor-pointer"
-                                            title="Change Status">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                             class="size-4">
-                                            <path fill-rule="evenodd"
-                                                  d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 0 1 .615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 0 0-1.06 1.061l2.999 3a.75.75 0 0 0 1.06 0l3.001-3a.75.75 0 1 0-1.06-1.06l-1.748 1.747a41.31 41.31 0 0 0-.264-3.386 2.18 2.18 0 0 0-1.97-1.913 41.512 41.512 0 0 0-7.477 0 2.18 2.18 0 0 0-1.969 1.913 41.16 41.16 0 0 0-.16 1.61.75.75 0 1 0 1.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 0 1 .615-.597A40.012 40.012 0 0 1 10 4.5ZM5.281 9.22a.75.75 0 0 0-1.06 0l-3.001 3a.75.75 0 1 0 1.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 0 0 1.97 1.913 41.533 41.533 0 0 0 7.477 0 2.18 2.18 0 0 0 1.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 1 0-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 0 1-.615.597 40.013 40.013 0 0 1-7.208 0 .68.68 0 0 1-.615-.597 39.785 39.785 0 0 1-.25-3.15l1.689 1.69a.75.75 0 0 0 1.06-1.061l-2.999-3Z"
-                                                  clip-rule="evenodd"/>
-                                        </svg>
+                                @adminHasPermission('users.update-status')
+                                <button wire:click="openStatusModal({{ $user->id }}, '{{ $user->status }}')"
+                                        class="text-text-secondary hover:text-secondary transition-colors cursor-pointer"
+                                        title="Change Status">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                         class="size-4">
+                                        <path fill-rule="evenodd"
+                                              d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 0 1 .615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 0 0-1.06 1.061l2.999 3a.75.75 0 0 0 1.06 0l3.001-3a.75.75 0 1 0-1.06-1.06l-1.748 1.747a41.31 41.31 0 0 0-.264-3.386 2.18 2.18 0 0 0-1.97-1.913 41.512 41.512 0 0 0-7.477 0 2.18 2.18 0 0 0-1.969 1.913 41.16 41.16 0 0 0-.16 1.61.75.75 0 1 0 1.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 0 1 .615-.597A40.012 40.012 0 0 1 10 4.5ZM5.281 9.22a.75.75 0 0 0-1.06 0l-3.001 3a.75.75 0 1 0 1.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 0 0 1.97 1.913 41.533 41.533 0 0 0 7.477 0 2.18 2.18 0 0 0 1.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 1 0-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 0 1-.615.597 40.013 40.013 0 0 1-7.208 0 .68.68 0 0 1-.615-.597 39.785 39.785 0 0 1-.25-3.15l1.689 1.69a.75.75 0 0 0 1.06-1.061l-2.999-3Z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
 
-                                    </button>
-                                @endif
+                                </button>
+                                @endAdminHasPermission
                             </div>
                         </td>
                         <td class="px-3 py-3">{{$user->email_verified_at->format('l, d-m-Y')}}</td>
@@ -131,7 +131,6 @@
     {{--                    @enderror--}}
     {{--                </div>--}}
 
-
     {{--            </div>--}}
     {{--            <div class="p-4 sm:p-6 border-t border-custom flex justify-end gap-3">--}}
     {{--                <button wire:click="closeAddModal" class="btn btn-tertiary ">--}}
@@ -152,6 +151,7 @@
     {{--    @endif--}}
     {{--    <!-- Assign Role Modal -->--}}
     <!-- Status Change Modal -->
+    @adminHasPermission(['users.update-status'])
     @if($showStatusModal)
         <x-others.modal class="w-lg overflow-visible">
             <div class="p-4 sm:p-6 border-b border-custom flex justify-between items-center">
@@ -167,13 +167,6 @@
             <div class="p-4 sm:p-6 space-y-6">
                 <div>
                     <label class="block text-sm font-medium mb-1">Status</label>
-                    <select wire:model="updateStatus"
-                            class="w-full bg-bg-secondary border border-custom rounded-md px-3 py-2 outline-none focus:border-secondary transition-colors">
-                        <option value="pending">Pending</option>
-                        <option value="active">Active</option>
-                        <option value="blocked">Blocked</option>
-                        <option value="disabled">Disabled</option>
-                    </select>
                     <x-others.select
                         class="bg-bg-secondary"
                         wire:model.defer="updateStatus"
@@ -186,13 +179,12 @@
                                 ]"
                     />
                 </div>
-
             </div>
             <div class="p-4 sm:p-6 border-t border-custom flex justify-end gap-3">
                 <button wire:click="closeStatusModal" class="btn btn-tertiary">
                     Cancel
                 </button>
-                <button wire:click="updateAdminStatus" class="btn btn-primary">
+                <button wire:click="updateUserStatus" class="btn btn-primary">
                     <svg fill="#ffffff" wire:loading wire:target="updateAdminStatus"
                          class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"
                          xmlns="http://www.w3.org/2000/svg">
@@ -205,4 +197,5 @@
             </div>
         </x-others.modal>
     @endif
+    @endAdminHasPermission
 </div>

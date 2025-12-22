@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\AdminsAndRole;
 
 use App\AdminPermission;
 use App\Mail\SendMail;
@@ -52,7 +52,7 @@ class AdminRole extends Component
             $admins = Admin::with('roles')->get();
         }
 
-        return view('livewire.admin.admin-role', compact('roles', 'admins'));
+        return view('livewire.admin.admins-and-role.admin-role', compact('roles', 'admins'));
     }
 
     public function openAddModal()

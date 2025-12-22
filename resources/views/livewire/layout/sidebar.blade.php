@@ -21,6 +21,7 @@
         </svg>
         Products
     </a>
+    @adminHasPermission('categories.view')
     <a wire:navigate
        href="{{ route('admin.categories') }}"
        class="{{ request()->routeIs('admin.categories') ? $nav_cl_a : $nav_cl}}">
@@ -32,6 +33,7 @@
         </svg>
         Categories
     </a>
+    @endAdminHasPermission
     <a wire:navigate
        href="{{ route('admin.categories') }}"
        class="{{ request()->routeIs('admin.categories') ? $nav_cl_a : $nav_cl}}">
@@ -101,7 +103,7 @@
         </svg>
         CMS Pages
     </a>
-
+    @adminHasPermission('users.view')
     <a wire:navigate
        href="{{ route('admin.users') }}"
        class="{{ request()->routeIs('admin.users') ? $nav_cl_a : $nav_cl}}">
@@ -111,6 +113,7 @@
         </svg>
         Users
     </a>
+    @endAdminHasPermission
     @adminHasPermission(['admins.view','role-permission.view-role'])
     <a wire:navigate
        href="{{ route('admin.adminRole') }}"

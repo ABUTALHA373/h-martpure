@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Products;
 
 use App\Models\Product;
 use Illuminate\Support\Str;
@@ -84,7 +84,7 @@ class Products extends Component
             })
             ->paginate(20);
 
-        return view('livewire.admin.products', compact('products'))
+        return view('livewire.admin.products.products', compact('products'))
             ->layout('components.layout.admin');
     }
 

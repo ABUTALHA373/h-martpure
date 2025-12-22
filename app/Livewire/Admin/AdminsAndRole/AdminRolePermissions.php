@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\AdminsAndRole;
 
 use App\AdminPermission;
 use Livewire\Attributes\Layout;
@@ -25,7 +25,7 @@ class AdminRolePermissions extends Component
     public function render()
     {
         $permissions = Permission::all();
-        return view('livewire.admin.admin-role-permissions', compact('permissions'));
+        return view('livewire.admin.admins-and-role.admin-role-permissions', compact('permissions'));
     }
 
     public function updatePermissions()

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Users;
 
+use App\AdminPermission;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -9,6 +10,8 @@ use Livewire\Component;
 #[Layout('components.layout.admin')]
 class Users extends Component
 {
+    use AdminPermission;
+
     public $searchText, $searchStatus, $searchSort;
 
     public $showStatusModal = false;
@@ -38,7 +41,7 @@ class Users extends Component
                 }
             })
             ->paginate(20);
-        return view('livewire.admin.users')->with('users', $users);
+        return view('livewire.admin.users.users')->with('users', $users);
     }
 
     public function openStatusModal($id, $status)
@@ -57,9 +60,7 @@ class Users extends Component
 
     public function updateUserStatus()
     {
-        if (!auth('admin')->user()->hasPermissionTo('user.edit')) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeAdmin('users.update-status');
         $user = User::find($this->statusUserId);
         if (!$user) {
             $this->dispatch('toast', type: 'error', title: 'Error!', message: 'Admin not found.');
