@@ -61,6 +61,7 @@ class Categories extends Component
         $this->authorizeAdmin('categories.edit');
         $this->resetValidation();
         $this->resetCategoryModal();
+        $this->isManage = true;
 
         $this->name = $category->name;
         $this->parent = $category->parent_id;
@@ -70,7 +71,6 @@ class Categories extends Component
 
         $this->categoryForManage = $category;
         $this->manageCategoryModal = true;
-        $this->isManage = true;
     }
 
 

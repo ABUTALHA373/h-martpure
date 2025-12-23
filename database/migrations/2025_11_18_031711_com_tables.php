@@ -26,13 +26,26 @@ return new class extends Migration {
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
         });
 
+        Schema::create('brands', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // Brand name
+            $table->string('code_name')->unique(); // Brand name
+            $table->text('description')->nullable(); // Optional description
+            $table->string('logo')->nullable(); // Optional brand logo
+            $table->boolean('is_active')->default(true);    // visibility control
+            $table->boolean('is_featured')->default(false); // highlight brand
+            $table->unsignedInteger('display_order')->default(0); // sorting
+
+            $table->timestamps();
+        });
+
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('slug')->unique();
             $table->string('sku')->unique();
-            $table->string('brand'); //
+            $table->unsignedBigInteger('brand_id')->nullable(); //
             $table->string('measurement')->nullable(); //
             $table->string('measurement_unit')->nullable();
             $table->unsignedBigInteger('sales_count')->default(0); // integer instead of string
@@ -42,6 +55,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
+            $table->foreign('brand_id')->references('id')->on('brands')->nullOnDelete();
         });
 
         Schema::create('inventories', function (Blueprint $table) {
@@ -57,15 +71,6 @@ return new class extends Migration {
             $table->enum('status', ['active', 'inactive'])->default('active'); // active/inactive stock
             $table->integer('sell_order')->default(0); // lower = first to sell
 
-            $table->timestamps();
-        });
-
-        Schema::create('brands', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique(); // Brand name
-            $table->string('code_name')->unique(); // Brand name
-            $table->text('description')->nullable(); // Optional description
-            $table->string('logo')->nullable(); // Optional brand logo
             $table->timestamps();
         });
 

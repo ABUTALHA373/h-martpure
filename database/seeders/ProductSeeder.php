@@ -49,7 +49,7 @@ class ProductSeeder extends Seeder
                 'name' => "Sample Product $i",
                 'slug' => "sample-product-$i",
                 'sku' => "SKU$i",
-                'brand' => $brandIds[array_rand($brandIds)],
+                'brand_id' => $brandIds[array_rand($brandIds)],
                 'category_id' => $categoryIds[array_rand($categoryIds)],
                 'description' => "This is a description for product $i.",
                 'measurement' => rand(1, 10),
