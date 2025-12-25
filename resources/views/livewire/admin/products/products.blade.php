@@ -96,15 +96,8 @@
                         <div class="flex items-center gap-4">
                             <div
                                 class="h-12 w-12 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden border border-custom">
-                                @php
-                                    $images = json_decode($product->images, true) ?? [];
-                                    $firstImage = $images[0] ?? 'default-product-image.svg';
-                                @endphp
-
-                                <img src="{{ asset('storage/' . $firstImage) }}" alt="Product Image"
+                                <img src="{{ $product->first_image_url }}" alt="{{ $product->name }}"
                                      class="h-full w-full object-cover">
-
-
                             </div>
                             <div>
                                 <div class="font-medium text-text-primary">{{$product->name}}</div>
@@ -361,12 +354,12 @@
                 {{-- Image Gallery --}}
                 <div class="space-y-4">
                     <div class="aspect-square rounded-xl overflow-hidden border border-custom bg-gray-100">
-                        <img src="{{ $selectedProduct['images'][0] }}"
+                        <img src="{{ $selectedProduct['images_url'][0] }}"
                              class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                              wire:click="openLightbox(0)">
                     </div>
                     <div class="grid grid-cols-4 gap-2">
-                        @foreach($selectedProduct['images'] as $index => $img)
+                        @foreach($selectedProduct['images_url'] as $index => $img)
                             <div
                                 class="aspect-square rounded-lg overflow-hidden border border-custom cursor-pointer hover:ring-2 hover:ring-secondary transition-all"
                                 wire:click="openLightbox({{ $index }})">
@@ -425,7 +418,7 @@
             </button>
 
             <div class="max-w-5xl max-h-[85vh] p-4">
-                <img src="{{ $selectedProduct['images'][$currentImageIndex] }}"
+                <img src="{{ $selectedProduct['images_url'][$currentImageIndex] }}"
                      class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
             </div>
 

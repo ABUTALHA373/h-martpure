@@ -32,12 +32,37 @@ trait LogAdminActivity
 
         if (!$admin) return;
 
+        $url = request()->fullUrl();
+        $component = null;
+
+        // Enhanced logging for Livewire
+        if (request()->route() && request()->route()->named('livewire.update')) {
+            $url = request()->header('Referer') ?? $url;
+            
+            // Try v3 snapshot parsing
+            $snapshot = request()->input('components.0.snapshot');
+            if ($snapshot) {
+                $decoded = json_decode($snapshot, true);
+                $component = $decoded['memo']['name'] ?? null;
+            } else {
+                 // Fallback for v2 or other structures
+                $component = request()->input('fingerprint.name') ?? request()->input('components.0.name');
+            }
+        }
+
         AdminActivityLog::create([
             'admin_id' => $admin->id,
             'event_type' => 'model',
             'model' => get_class($this),
             'model_id' => $this->id,
             'action' => $action,
+            'is_manual' => false,
+            'request_route' => json_encode([
+                'route' => request()->route() ? request()->route()->getName() : null,
+                'url' => $url,
+                'component' => $component
+            ]),
+            // 'url' and 'component' columns removed as per request
 
             // model before update
             'previous_data' => json_encode($this->getOriginal()),

@@ -14,7 +14,7 @@ class Categories extends Component
 
 
     public $manageCategoryModal = false;
-    public $name, $parent, $status = 1, $display_order = 0, $description;
+    public $name, $parent, $status = 1, $display_order = 999, $description;
     public $categoryForDelete = null;
     public $categoryForManage = null;
     public $isManage = false;
@@ -167,7 +167,9 @@ class Categories extends Component
         if (empty($this->categoryForDelete)) {
             $this->dispatch('toast', type: 'error', title: 'Not Found!', message: 'Category not found. Please Try Again.');
         }
-        $this->categoryForDelete->delete();
+        if ($this->categoryForDelete->delete()) {
+            $this->dispatch('toast', type: 'success', title: 'Deleted!', message: 'The category has been deleted.');
+        }
         $this->categoryForDelete = null;
 
     }
