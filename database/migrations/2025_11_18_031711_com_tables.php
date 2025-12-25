@@ -167,6 +167,8 @@ return new class extends Migration {
             $table->string('model')->nullable();
             $table->unsignedBigInteger('model_id')->nullable();
             $table->string('action', 100);
+            $table->text('request_route')->nullable(); // Stores JSON: {route, url, component}
+            $table->boolean('is_manual')->default(false);
             $table->longText('previous_data')->nullable();
             $table->longText('new_data')->nullable();
             $table->longText('changes')->nullable();

@@ -19,7 +19,7 @@
     selected: @entangle($attributes->wire('model')),
     options: {{ json_encode($options) }},
     get label() {
-        if (!this.selected) return '{{ $placeholder }}';
+        if (this.selected === null || this.selected === undefined || this.selected === '') return '{{ $placeholder }}';
         const option = this.options.find(o => o['{{ $optionValue }}'] == this.selected);
         return option ? option['{{ $optionLabel }}'] : '{{ $placeholder }}';
     },
@@ -35,7 +35,7 @@
                    focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors
                    flex justify-between items-center cursor-pointer text-md">
         <span x-text="label"
-              :class="{ 'text-text-secondary': !selected }"
+              :class="{ 'text-text-secondary': selected === null || selected === undefined || selected === '' }"
               class="truncate overflow-hidden whitespace-nowrap max-w-full"
               @mouseenter="$el.title = $el.scrollWidth > $el.clientWidth ? label : ''"
               @mouseleave="$el.title = ''">

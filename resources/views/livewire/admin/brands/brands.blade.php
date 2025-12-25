@@ -2,17 +2,17 @@
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
         <div class="text-center sm:text-left">
-            <h1 class="text-3xl font-bold text-text-primary">Categories</h1>
-            <p class="text-text-secondary mt-1">Manage your product categories and subcategories here</p>
+            <h1 class="text-3xl font-bold text-text-primary">Brands</h1>
+            <p class="text-text-secondary mt-1">Manage your product brands here</p>
         </div>
-        @adminHasPermission('categories.create')
-        <button wire:click="openManageCategoryModal"
+        @adminHasPermission('brands.create')
+        <button wire:click="openManageBrandModal"
                 class="btn btn-primary w-full sm:w-auto flex items-center justify-center gap-2 py-3 px-4 text-lg whitespace-nowrap">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                 <path
                     d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/>
             </svg>
-            Add New Category
+            Add New Brand
         </button>
         @endAdminHasPermission
     </div>
@@ -98,7 +98,7 @@
                     <td class="px-6 py-2 text-text-primary font-bold">{{$brand->name}}</td>
                     <td class="px-6 py-2 text-text-primary">{{$brand->code_name}}</td>
                     <td class="px-6 py-2 text-text-primary">
-                        <img src="{{ asset($brand->logo) }}" alt="{{ $brand->name }} Logo"
+                        <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }} Logo"
                              class="w-12 h-12 object-contain rounded">
                     </td>
 
@@ -136,7 +136,7 @@
                             class="flex items-center justify-end gap-2 transition-opacity">
                             @adminHasPermission('brands.edit')
                             <button
-                                wire:click="manageCategory({{ $brand->id }})"
+                                wire:click="manageBrand({{ $brand->id }})"
                                 class="p-1.5 text-secondary hover:bg-bg-secondary rounded-md transition-colors cursor-pointer"
                                 title="Edit">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -174,99 +174,132 @@
 
     </div>
 
-    {{--    --}}{{-- Add Category Modal --}}
-    {{--    @adminHasPermission(['categories.create','categories.edit'])--}}
-    {{--    @if($manageCategoryModal)--}}
-    {{--        <x-others.modal>--}}
-    {{--            <div class="p-4 sm:p-6 border-b border-custom flex justify-between items-center">--}}
-    {{--                <h2 class="text-xl font-bold text-text-primary">{{ $isManage ? 'Update' : 'Add New' }} Category</h2>--}}
-    {{--                <button wire:click="closeManageCategoryModal"--}}
-    {{--                        class="text-text-secondary hover:text-text-primary cursor-pointer">--}}
-    {{--                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"--}}
-    {{--                         stroke="currentColor" class="size-6">--}}
-    {{--                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>--}}
-    {{--                    </svg>--}}
-    {{--                </button>--}}
-    {{--            </div>--}}
-    {{--            <div class="p-4 sm:p-6 space-y-6 flex-1 overflow-y-auto">--}}
-    {{--                --}}{{-- Basic Info --}}
-    {{--                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">--}}
-    {{--                    <div>--}}
-    {{--                        <label class="block text-sm font-medium mb-1">Category Name</label>--}}
-    {{--                        <x-others.input wire:model.defer="name" class="w-full bg-bg-secondary"--}}
-    {{--                                        placeholder="Enter category name"/>--}}
-    {{--                        @error('name')--}}
-    {{--                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>--}}
-    {{--                        @enderror--}}
-    {{--                    </div>--}}
-    {{--                    <div>--}}
-    {{--                        <label class="block text-sm font-medium mb-1">Parent (Only for Subcategory)</label>--}}
-    {{--                        @php--}}
-    {{--                            $optionDefault = [['label' => 'None(For New Category)', 'value' => '']];--}}
-    {{--                            $optionsParents =  collect($parentCategories)->map(fn($p) =>     [--}}
-    {{--                            'label' => $p['name'],      // Visible text--}}
-    {{--                            'value' => $p['id'],      // Actual value--}}
-    {{--                                ])->toArray();--}}
-    {{--                            $options = array_merge($optionDefault,$optionsParents)--}}
-    {{--                        @endphp--}}
+    {{--Add Brand Modal --}}
+    @adminHasPermission(['brands.create','brands.edit'])
+    @if($manageBrandModal)
+        <x-others.modal>
+            <div class="p-4 sm:p-6 border-b border-custom flex justify-between items-center">
+                <h2 class="text-xl font-bold text-text-primary">{{ $isManage ? 'Update' : 'Add New' }} Brand</h2>
+                <button wire:click="closeManageBrandModal"
+                        class="text-text-secondary hover:text-text-primary cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 sm:p-6 space-y-6 flex-1 overflow-y-auto">
 
-    {{--                        <x-others.select--}}
-    {{--                            class="bg-bg-secondary"--}}
-    {{--                            wire:model.defer="parent"--}}
-    {{--                            placeholder="All Categories"--}}
-    {{--                            :options="$options"--}}
-    {{--                        />--}}
-    {{--                        @error('parent')--}}
-    {{--                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>--}}
-    {{--                        @enderror--}}
-    {{--                    </div>--}}
-    {{--                    <div>--}}
-    {{--                        <label class="block text-sm font-medium mb-1">Display Order</label>--}}
-    {{--                        <x-others.input wire:model.defer="display_order" class="w-full bg-bg-secondary"--}}
-    {{--                                        type="number"--}}
-    {{--                                        placeholder="Enter display order"/>--}}
-    {{--                        @error('display_order')--}}
-    {{--                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>--}}
-    {{--                        @enderror--}}
-    {{--                    </div>--}}
-    {{--                    <div>--}}
-    {{--                        <label class="block text-sm font-medium mb-1">Status</label>--}}
-    {{--                        <x-others.select--}}
-    {{--                            class="bg-bg-secondary"--}}
-    {{--                            wire:model.defer="status"--}}
-    {{--                            placeholder="Select Status"--}}
-    {{--                            :options="[--}}
-    {{--                                ['label' => 'Active', 'value' => 1],--}}
-    {{--                                ['label' => 'Inactive', 'value' => 0]--}}
-    {{--                            ]"--}}
-    {{--                        />--}}
-    {{--                        @error('status')--}}
-    {{--                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>--}}
-    {{--                        @enderror--}}
-    {{--                    </div>--}}
-    {{--                    <div class="md:col-span-2">--}}
-    {{--                        <label class="block text-sm font-medium mb-1">Description</label>--}}
-    {{--                        <textarea wire:model.defer="description" rows="4"--}}
-    {{--                                  class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary placeholder-text-secondary"></textarea>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--            </div>--}}
-    {{--            <div class="p-4 sm:p-6 border-t border-custom flex justify-end gap-3">--}}
-    {{--                <button wire:click="closeManageCategoryModal" class="btn btn-tertiary ">--}}
-    {{--                    Cancel--}}
-    {{--                </button>--}}
-    {{--                <button wire:click="saveCategory()" class="btn btn-primary">--}}
-    {{--                    <svg fill="#ffffff" wire:loading wire:target="saveCategory"--}}
-    {{--                         class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"--}}
-    {{--                         xmlns="http://www.w3.org/2000/svg">--}}
-    {{--                        <g>--}}
-    {{--                            <path d="M8,1V2.8A5.2,5.2,0,1,1,2.8,8H1A7,7,0,1,0,8,1Z"/>--}}
-    {{--                        </g>--}}
-    {{--                    </svg>--}}
-    {{--                    {{ $isManage ? 'Update' : 'Add' }} Category--}}
-    {{--                </button>--}}
-    {{--            </div>--}}
-    {{--        </x-others.modal>--}}
-    {{--    @endif--}}
-    {{--    @endAdminHasPermission--}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Brand Name</label>
+                        <x-others.input wire:model.defer="name" class="w-full bg-bg-secondary"
+                                        placeholder="Enter Brand name"/>
+                        @error('name')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Display Order</label>
+                        <x-others.input wire:model.defer="display_order" class="w-full bg-bg-secondary"
+                                        type="number"
+                                        placeholder="Enter display order"/>
+                        @error('display_order')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <x-others.select
+                            class="bg-bg-secondary"
+                            wire:model.defer="is_active"
+                            placeholder="Select status"
+                            :options="[
+                                    ['label' => 'Active', 'value' => 1],
+                                    ['label' => 'Inactive', 'value' => 0]
+                                ]"
+                        />
+                        @error('status')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Is Featured</label>
+                        <x-others.select
+                            class="bg-bg-secondary"
+                            wire:model.defer="is_featured"
+                            placeholder="Select Featured"
+                            :options="[
+                                    ['label' => 'Featured', 'value' => 1],
+                                    ['label' => 'Not Featured', 'value' => 0]
+                                ]"
+                        />
+                        @error('status')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Description</label>
+                        <textarea wire:model.defer="description" rows="4" placeholder="Write description here ..."
+                                  class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary placeholder-text-secondary"></textarea>
+                    </div>
+                    {{-- Image Upload --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Brand Logo</label>
+                        <div
+                            class="border-2 border-dashed border-custom rounded-lg p-8 text-center hover:bg-bg-secondary transition-colors relative cursor-pointer">
+                            <input type="file" wire:model="logo" accept="image/*"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <div class="text-text-secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5"
+                                     stroke="currentColor" class="size-10 mx-auto mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
+                                </svg>
+                                <p>Click or drag to upload images</p>
+                            </div>
+                        </div>
+
+                        {{-- Previews --}}
+                        @if($logo)
+                            <div class="grid grid-cols-5 gap-4 mt-4">
+                                <div
+                                    class="relative aspect-square rounded-lg overflow-hidden border border-custom group">
+                                    <img
+                                        src="{{ is_string($logo) ? (str_starts_with($logo, 'http') ? $logo : asset('storage/'.$logo)) : $logo->temporaryUrl() }}"
+                                        class="w-full h-full object-cover">
+                                    <button wire:click="removeImage()"
+                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                             class="size-3">
+                                            <path
+                                                d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 sm:p-6 border-t border-custom flex justify-end gap-3">
+                <button wire:click="closeManageBrandModal" class="btn btn-tertiary ">
+                    Cancel
+                </button>
+                <button wire:click="saveBrand()" class="btn btn-primary">
+                    <svg fill="#ffffff" wire:loading wire:target="saveBrand"
+                         class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <path d="M8,1V2.8A5.2,5.2,0,1,1,2.8,8H1A7,7,0,1,0,8,1Z"/>
+                        </g>
+                    </svg>
+                    {{ $isManage ? 'Update' : 'Add' }} Brand
+                </button>
+            </div>
+        </x-others.modal>
+    @endif
+    @endAdminHasPermission
 </div>

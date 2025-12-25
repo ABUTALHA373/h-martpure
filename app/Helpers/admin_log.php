@@ -9,12 +9,36 @@ if (!function_exists('admin_log')) {
         $admin = Auth::guard('admin')->user();
         if (!$admin) return;
 
+        $url = request()->fullUrl();
+        $component = null;
+
+        // Enhanced logging for Livewire
+        if (request()->route() && request()->route()->named('livewire.update')) {
+            $url = request()->header('Referer') ?? $url;
+
+            // Try v3 snapshot parsing
+            $snapshot = request()->input('components.0.snapshot');
+            if ($snapshot) {
+                $decoded = json_decode($snapshot, true);
+                $component = $decoded['memo']['name'] ?? null;
+            } else {
+                 // Fallback for v2 or other structures
+                $component = request()->input('fingerprint.name') ?? request()->input('components.0.name');
+            }
+        }
+
         AdminActivityLog::create([
             'admin_id' => $admin->id,
             'event_type' => $eventType, // 'auth', 'status-change', 'custom'
             'model' => $data['model'] ?? null,
             'model_id' => $data['model_id'] ?? null,
             'action' => $action,
+            'is_manual' => true,
+             'request_route' => json_encode([
+                'route' => request()->route() ? request()->route()->getName() : null,
+                'url' => $url,
+                'component' => $component
+            ]),
             'previous_data' => !empty($data['previous']) ? json_encode($data['previous']) : null,
             'new_data' => !empty($data['new']) ? json_encode($data['new']) : null,
             'changes' => !empty($data['changes']) ? json_encode($data['changes']) : null,

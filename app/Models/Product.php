@@ -12,6 +12,8 @@ class Product extends Model
 
     protected $table = 'products';
     protected $guarded = [];
+    protected $appends = ['first_image_url', 'images_url'];
+
 
     public function category(): BelongsTo
     {
@@ -23,4 +25,30 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
+    public function getFirstImageUrlAttribute()
+    {
+        $images = json_decode($this->images, true);
+        if (!$images || empty($images)) {
+             return asset('storage/default-product-image.svg');
+        }
+        $firstImage = $images[0];
+        
+        if (str_starts_with($firstImage, 'http')) {
+            return $firstImage;
+        }
+        return asset('storage/' . $firstImage);
+    }
+
+    public function getImagesUrlAttribute()
+    {
+        $images = json_decode($this->images, true);
+        if (!$images) return [];
+
+        return array_map(function($img) {
+            if (str_starts_with($img, 'http')) {
+                return $img;
+            }
+            return asset('storage/' . $img);
+        }, $images);
+    }
 }

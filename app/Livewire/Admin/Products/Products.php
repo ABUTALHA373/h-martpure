@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\Products;
 
 use App\Models\Product;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Exception;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -112,7 +114,7 @@ class Products extends Component
 
         Product::create([
             'name' => $this->name,
-            'brand' => $this->brand,
+            'brand_id' => $this->brand,
             'sku' => $this->sku,
             'slug' => $this->slug(),
             'category_id' => $this->category,
@@ -131,12 +133,30 @@ class Products extends Component
     {
         $paths = [];
 
-        // Only store images that are Livewire temporary uploads
         foreach ($this->uploadedImages as $image) {
+//            if ($image instanceof TemporaryUploadedFile) {
+//                $paths[] = $image->store('products', 'public');
+//            } else {
+//                // Already stored path
+//                $paths[] = $image;
+//            }
             if ($image instanceof TemporaryUploadedFile) {
-                $paths[] = $image->store('products', 'public');
+
+                try {
+
+                    $uploaded = Cloudinary::uploadApi()->upload(
+                        $image->getRealPath(),
+                        ['folder' => 'products']
+                    );
+
+                    $paths[] = $uploaded['secure_url'];
+
+                } catch (Exception $e) {
+                    $paths[] = $image->store('products', 'public');
+                }
+
             } else {
-                // Already stored path
+                // Already stored Cloudinary URL
                 $paths[] = $image;
             }
         }

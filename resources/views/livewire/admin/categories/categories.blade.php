@@ -275,7 +275,7 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium mb-1">Description</label>
-                        <textarea wire:model.defer="description" rows="4"
+                        <textarea wire:model.defer="description" rows="4" placeholder="Write description here ..."
                                   class="w-full px-4 py-2 rounded-lg border border-custom bg-bg-secondary text-text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary placeholder-text-secondary"></textarea>
                     </div>
                 </div>
