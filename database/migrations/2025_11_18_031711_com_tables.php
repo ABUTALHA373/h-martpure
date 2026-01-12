@@ -58,21 +58,61 @@ return new class extends Migration {
             $table->foreign('brand_id')->references('id')->on('brands')->nullOnDelete();
         });
 
+//        Schema::create('inventories', function (Blueprint $table) {
+//            $table->id();
+//            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+//            $table->string('uid')->unique();
+//            $table->integer('quantity')->default(0);
+//            $table->decimal('cost_price', 10, 2)->nullable();
+//            $table->decimal('sell_price', 10, 2)->nullable();
+//            $table->string('location')->nullable();
+//
+//            // Status and Sell Order
+//            $table->enum('status', ['active', 'inactive'])->default('active'); // active/inactive stock
+//            $table->integer('sell_order')->default(0); // lower = first to sell
+//
+//            $table->timestamps();
+//        });
+
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('uid')->unique();
-            $table->integer('quantity')->default(0);
-            $table->decimal('cost_price', 10, 2)->nullable();
-            $table->decimal('sell_price', 10, 2)->nullable();
-            $table->string('location')->nullable();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
 
-            // Status and Sell Order
-            $table->enum('status', ['active', 'inactive'])->default('active'); // active/inactive stock
-            $table->integer('sell_order')->default(0); // lower = first to sell
+            // Batch identity
+            $table->string('batch_uid')->unique();
+            $table->date('purchase_date')->nullable();
+
+            // Quantities
+            $table->integer('initial_quantity');
+            $table->integer('remaining_quantity'); // remaining
+            $table->integer('reserved_quantity')->default(0);
+
+            // Cost breakdown (per unit)
+            $table->decimal('supplier_cost', 10, 2)->nullable(); //purchase cost
+            $table->decimal('transport_cost', 10, 2)->nullable();
+            $table->decimal('handling_cost', 10, 2)->nullable();
+            $table->decimal('storage_cost', 10, 2)->nullable();
+            $table->decimal('other_cost', 10, 2)->nullable();
+
+            // Taxes (per unit)
+            $table->decimal('import_tax', 10, 2)->nullable();
+            $table->decimal('vat_tax', 10, 2)->nullable();
+            $table->decimal('other_tax', 10, 2)->nullable();
+
+            // override price rule (per product)
+            $table->decimal('override_sell_price', 10, 2)->nullable();
+            $table->decimal('override_margin_percent', 5, 2)->nullable();
+
+            // Control
+            $table->enum('status', ['active', 'sold_out', 'inactive'])->default('active');
+            $table->integer('sell_order')->default(0); // FIFO
+            $table->string('store_location')->nullable();
 
             $table->timestamps();
+
+            $table->index(['product_id', 'status', 'sell_order', 'created_at']);
         });
+
 
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();

@@ -65,17 +65,47 @@ class ProductSeeder extends Seeder
         $products = Product::all();
 
         foreach ($products as $product) {
+
+            $initialQty = rand(20, 150);
+
             Inventory::create([
                 'product_id' => $product->id,
-                'uid' => 'INV-' . strtoupper(uniqid()), // Unique inventory ID
-                'quantity' => rand(10, 100), // Random stock
-                'cost_price' => rand(50, 500), // Example cost price
-                'sell_price' => rand(100, 1000), // Example selling price
-                'location' => 'Warehouse ' . rand(1, 3),
+
+                // Batch identity
+                'batch_uid' => 'BATCH-' . strtoupper(uniqid()),
+                'purchase_date' => now()->subDays(rand(1, 120)),
+
+                // Quantities
+                'initial_quantity' => $initialQty,
+                'remaining_quantity' => $initialQty,
+                'reserved_quantity' => 0,
+
+                // Cost breakdown (per unit)
+                'supplier_cost' => rand(50, 300),
+                'transport_cost' => rand(5, 30),
+                'handling_cost' => rand(3, 20),
+                'storage_cost' => rand(2, 15),
+                'other_cost' => rand(0, 10),
+
+                // Taxes (per unit)
+                'import_tax' => rand(0, 20),
+                'vat_tax' => rand(0, 15),
+                'other_tax' => rand(0, 10),
+
+                // Pricing
+                'sell_price' => rand(120, 800),
+                'min_sell_price' => rand(100, 150),
+
+                // Control
                 'status' => 'active',
-                'sell_order' => rand(1, 100), // Order for selling priority
+                'sell_order' => 0, // IMPORTANT: keep FIFO clean
+                'store_location' => 'Warehouse ' . rand(1, 3),
+
+                'created_at' => now()->subDays(rand(1, 120)),
+                'updated_at' => now(),
             ]);
         }
+
     }
 
 }
