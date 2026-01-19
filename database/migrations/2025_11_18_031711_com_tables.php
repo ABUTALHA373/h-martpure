@@ -91,22 +91,18 @@ return new class extends Migration {
             $table->decimal('supplier_cost', 10, 2)->nullable(); //purchase cost
             $table->decimal('transport_cost', 10, 2)->nullable();
             $table->decimal('handling_cost', 10, 2)->nullable();
-            $table->decimal('storage_cost', 10, 2)->nullable();
             $table->decimal('other_cost', 10, 2)->nullable();
 
-            // Taxes (per unit)
-            $table->decimal('import_tax', 10, 2)->nullable();
-            $table->decimal('vat_tax', 10, 2)->nullable();
-            $table->decimal('other_tax', 10, 2)->nullable();
-
             // override price rule (per product)
-            $table->decimal('override_sell_price', 10, 2)->nullable();
-            $table->decimal('override_margin_percent', 5, 2)->nullable();
+            $table->decimal('sell_price', 10, 2)->nullable();
+            $table->decimal('minimum_sell_price', 10, 2)->nullable();
+            $table->decimal('offer_price', 5, 2)->nullable();
 
             // Control
             $table->enum('status', ['active', 'sold_out', 'inactive'])->default('active');
             $table->integer('sell_order')->default(0); // FIFO
             $table->string('store_location')->nullable();
+            $table->text('notes')->nullable();
 
             $table->timestamps();
 

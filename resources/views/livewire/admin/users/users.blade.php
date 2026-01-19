@@ -1,13 +1,13 @@
 <div class="space-y-8">
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
         <div class="text-center sm:text-left">
             <h1 class="text-3xl font-bold text-text-primary">Users</h1>
-            <p class="text-text-secondary mt-1">Manage general users</p>
+            <p class="text-text-secondary">Manage general users</p>
         </div>
 
     </div>
     {{-- Filters & Search --}}
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-3">
         {{-- Search --}}
         <div class="md:col-span-6 relative">
             <x-others.input

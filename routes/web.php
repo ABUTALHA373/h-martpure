@@ -6,6 +6,7 @@ use App\Livewire\Admin\AdminsAndRole\AdminUserPermissions;
 use App\Livewire\Admin\Brands\Brands;
 use App\Livewire\Admin\Categories\Categories;
 use App\Livewire\Admin\Dashboard\Dashboard;
+use App\Livewire\Admin\Inventory\Inventory;
 use App\Livewire\Admin\Products\Products;
 use App\Livewire\Admin\Users\Users;
 use App\Livewire\Auth\Login;
@@ -34,6 +35,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->middleware('permission:brands.view');
         Route::get('/users', Users::class)->name('users')
             ->middleware('permission:users.view');
+        Route::get('/inventory', Inventory::class)->name('inventory')
+            ->middleware('permission:inventory.view');
         Route::get('/adminRole', AdminRole::class)->name('adminRole')
             ->middleware('permission:admins.view|role-permission.view-role');
         Route::get('/roles/{role}/permissions', AdminRolePermissions::class)->name('role.permissions')

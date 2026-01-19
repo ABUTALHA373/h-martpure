@@ -1,9 +1,9 @@
-<div class="space-y-8">
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+<div class="space-y-4">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
         <div class="text-center sm:text-left">
             <h2 class="text-3xl font-bold text-text-primary">Manage Permissions: <span
                     class="text-secondary">{{ $role->name }}</span></h2>
-            <p class="text-sm text-text-secondary mt-1">Select permissions to assign to this role</p>
+            <p class="text-sm text-text-secondary">Select permissions to assign to this role</p>
         </div>
         <a wire:navigate href="{{ route('admin.adminRole') }}" class="btn btn-tertiary">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -34,7 +34,7 @@
                     };
                 @endphp
 
-                <div class="space-y-8" x-data="{
+                <div class="space-y-4" x-data="{
                         selected: @entangle('selectedPermissions'),
                         toggleAll(groupPermissions) {
                             let allSelected = groupPermissions.every(p => this.selected.includes(p));

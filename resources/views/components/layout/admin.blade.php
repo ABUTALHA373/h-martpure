@@ -28,7 +28,7 @@
         </div>
         {{-- Sidebar + Content --}}
 
-        <div class="bg-bg-secondary p-3 md:p-8 text-sm overflow-y-auto h-full" id="mainContent">
+        <div class="bg-bg-secondary p-3 md:p-6 text-sm overflow-y-auto h-full" id="mainContent">
             {{ $slot }}
         </div>
     </div>

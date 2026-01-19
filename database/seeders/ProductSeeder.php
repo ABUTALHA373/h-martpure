@@ -84,27 +84,23 @@ class ProductSeeder extends Seeder
                 'supplier_cost' => rand(50, 300),
                 'transport_cost' => rand(5, 30),
                 'handling_cost' => rand(3, 20),
-                'storage_cost' => rand(2, 15),
                 'other_cost' => rand(0, 10),
 
-                // Taxes (per unit)
-                'import_tax' => rand(0, 20),
-                'vat_tax' => rand(0, 15),
-                'other_tax' => rand(0, 10),
-
-                // Pricing
-                'sell_price' => rand(120, 800),
-                'min_sell_price' => rand(100, 150),
+                // Pricing (batch override)
+                'sell_price' => rand(150, 800),
+                'minimum_sell_price' => rand(120, 149),
+                'offer_price' => rand(0, 1) ? rand(100, 140) : null,
 
                 // Control
                 'status' => 'active',
-                'sell_order' => 0, // IMPORTANT: keep FIFO clean
+                'sell_order' => 0, // FIFO safe
                 'store_location' => 'Warehouse ' . rand(1, 3),
 
                 'created_at' => now()->subDays(rand(1, 120)),
                 'updated_at' => now(),
             ]);
         }
+
 
     }
 

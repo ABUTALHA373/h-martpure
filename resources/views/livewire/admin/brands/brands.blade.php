@@ -1,9 +1,9 @@
 <div>
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
         <div class="text-center sm:text-left">
             <h1 class="text-3xl font-bold text-text-primary">Brands</h1>
-            <p class="text-text-secondary mt-1">Manage your product brands here</p>
+            <p class="text-text-secondary">Manage your product brands here</p>
         </div>
         @adminHasPermission('brands.create')
         <button wire:click="openManageBrandModal"
@@ -17,7 +17,7 @@
         @endAdminHasPermission
     </div>
     {{-- Filters & Search --}}
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-3">
         {{-- Search --}}
         <div class="md:col-span-5 relative">
             <x-others.input
@@ -280,10 +280,14 @@
                                 </svg>
                                 <p>Click or drag to upload images</p>
                             </div>
-                            <div wire:loading.flex wire:target="logo" class="flex-col items-center justify-center text-text-secondary">
-                                <svg class="animate-spin h-10 w-10 text-primary mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <div wire:loading.flex wire:target="logo"
+                                 class="flex-col items-center justify-center text-text-secondary">
+                                <svg class="animate-spin h-10 w-10 text-primary mb-2" xmlns="http://www.w3.org/2000/svg"
+                                     fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 <p>Uploading...</p>
                             </div>
@@ -297,7 +301,8 @@
                 <button wire:click="closeManageBrandModal" class="btn btn-tertiary ">
                     Cancel
                 </button>
-                <button wire:click="saveBrand()" wire:loading.attr="disabled" wire:target="logo" class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                <button wire:click="saveBrand()" wire:loading.attr="disabled" wire:target="logo"
+                        class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
                     <svg fill="#ffffff" wire:loading wire:target="saveBrand"
                          class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 16 16"
                          xmlns="http://www.w3.org/2000/svg">
