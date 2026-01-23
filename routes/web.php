@@ -8,6 +8,7 @@ use App\Livewire\Admin\Categories\Categories;
 use App\Livewire\Admin\Dashboard\Dashboard;
 use App\Livewire\Admin\Inventory\Inventory;
 use App\Livewire\Admin\Products\Products;
+use App\Livewire\Admin\SystemSetting\SystemSetting;
 use App\Livewire\Admin\Users\Users;
 use App\Livewire\Auth\Login;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +44,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->middleware('permission:role-permission.manage-role-permission');
         Route::get('/admins/{admin}/permissions', AdminUserPermissions::class)->name('user.permissions')
             ->middleware('permission:role-permission.manage-admin-permission');
-
+        Route::get('/siteSetting', SystemSetting::class)->name('siteSetting')
+            ->middleware('permission:settings.view');
     });
-
 });

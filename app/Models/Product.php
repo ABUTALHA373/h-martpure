@@ -25,6 +25,11 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
     public function getFirstImageUrlAttribute()
     {
         $images = json_decode($this->images, true);

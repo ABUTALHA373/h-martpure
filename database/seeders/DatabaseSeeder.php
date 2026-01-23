@@ -46,6 +46,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductSeeder::class,
             PermissionSeeder::class,
+            SystemSettingsSeeder::class,
         ]);
     }
 

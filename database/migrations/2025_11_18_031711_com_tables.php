@@ -81,6 +81,7 @@ return new class extends Migration {
             // Batch identity
             $table->string('batch_uid')->unique();
             $table->date('purchase_date')->nullable();
+            $table->date('expiry_date')->nullable();
 
             // Quantities
             $table->integer('initial_quantity');
