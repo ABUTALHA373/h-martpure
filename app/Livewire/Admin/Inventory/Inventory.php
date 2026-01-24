@@ -61,6 +61,7 @@ class Inventory extends Component
             ->when($this->searchCategory, function ($q) {
                 $q->where('category_id', $this->searchCategory);
             })
+
             // Status Filtering (Based on computed stock levels is tricky in Eloquent directly without subqueries or having a stock column)
             // Assuming Product has 'stock' column updated via caching, we can filter directly.
             ->when($this->searchStatus, function ($q) {
@@ -72,6 +73,7 @@ class Inventory extends Component
                     $q->where('stock', '<=', 0);
                 }
             })
+
             // Sorting
             ->when($this->searchSort, function ($q) {
                 if ($this->searchSort === 'latest') {

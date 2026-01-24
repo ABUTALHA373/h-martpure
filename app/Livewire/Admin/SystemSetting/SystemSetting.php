@@ -4,11 +4,13 @@ namespace App\Livewire\Admin\SystemSetting;
 
 use App\Models\SystemSetting as SystemSettingModel;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('components.layout.admin')]
 class SystemSetting extends Component
 {
+    #[Url]
     public $activeTab = 'general';
     public $settingValues = [];
     public $groups = [];
